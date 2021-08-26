@@ -1,7 +1,8 @@
-import React from "react";
+import React, {useEffect, useState} from "react";
 import {Link, NavLink} from "react-router-dom";
 import {useSelector} from "react-redux";
 import Logout from "../pages/Auth/Logout";
+
 
 const Header = () => {
   const {user, isLoggedIn, isLoading} = useSelector(({user}) => ({
@@ -9,6 +10,10 @@ const Header = () => {
     isLoggedIn: user.user.isLoggedIn,
     isLoading: user?.isLoading,
   }));
+
+  const [render, setRender] = useState(0);
+
+  console.log(render)
 
   return (
     <>
@@ -61,6 +66,6 @@ const Header = () => {
       </nav>
     </>
   );
-};
+}
 
 export default Header;

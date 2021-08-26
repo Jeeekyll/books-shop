@@ -7,6 +7,7 @@ const SET_BOOK = 'SET_BOOK';
 const initialState = {
   books: [],
   currentBook: {},
+  pagination: {},
   isFetching: false,
 }
 
@@ -20,7 +21,8 @@ const books = (state = initialState, action) => {
     case SET_BOOKS:
       return {
         ...state,
-        books: action.payload,
+        books: action.payload.books,
+        pagination: action.payload.pagination,
       }
     case SET_BOOK:
       return {
@@ -42,9 +44,11 @@ export const fetchBooks = (page) => {
     dispatch(setIsFetching(true));
     const response = await booksAPI.getBooks(page);
     dispatch(setBooks({
-      items: response.data,
-      totalPagesCount: response.last_page,
-      page: response.current_page,
+      books: response.data,
+      pagination: {
+        totalPagesCount: response.meta?.last_page,
+        page: response.meta?.current_page,
+      },
     }));
 
     dispatch(setIsFetching(false));
@@ -55,7 +59,7 @@ export const fetchBook = (slug) => {
   return async (dispatch) => {
     dispatch(setIsFetching(true));
     const response = await booksAPI.getBook(slug);
-    dispatch(setBook(response.item));
+    dispatch(setBook(response.data));
     dispatch(setIsFetching(false));
   };
 };

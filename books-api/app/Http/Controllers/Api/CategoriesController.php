@@ -3,8 +3,8 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\CategoryResource;
 use App\Models\Category;
-use Illuminate\Http\Request;
 
 class CategoriesController extends Controller
 {
@@ -16,18 +16,13 @@ class CategoriesController extends Controller
             ->orderBy('books_count', 'desc')
             ->take(5)
             ->get();
-        return response([
-            'items' => $categories,
-        ]);
+        return response()->json(['data' => $categories]);
     }
 
     public function show($slug)
     {
-        $category = Category::query()->firstWhere('slug', $slug);
-        $category->books;
-
-        return response([
-            'category' => $category,
-        ]);
+        return new CategoryResource(
+            Category::query()->firstWhere('slug', $slug)
+        );
     }
 }

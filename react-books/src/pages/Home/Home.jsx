@@ -1,4 +1,4 @@
-import React, {useCallback, useEffect, useMemo, useState} from "react";
+import React, {useEffect, useState} from "react";
 import {fetchBooks} from "../../store/books";
 import {useDispatch, useSelector} from "react-redux";
 import {getPagesArray} from "../../utils/pages";
@@ -10,58 +10,32 @@ import classNames from "classnames";
 const Home = () => {
   const dispatch = useDispatch();
 
-  const [counter, setCounter] = useState(0);
-
   const {
-    isFetching, books, currentPage, totalPagesCount,
-    isLoggedIn, categories
+    isFetching, books, currentPage, totalPagesCount, categories
   } = useSelector(({books, user, categories}) => ({
+    books: books.books,
+    currentPage: books.pagination.page,
+    totalPagesCount: books.pagination.totalPagesCount,
     isFetching: books.isFetching,
-    books: books.books.items,
-    currentPage: books.books.page,
-    totalPagesCount: books.books.totalPagesCount,
-    isLoggedIn: user.user.isLoggedIn,
+
     categories: categories.categories,
   }));
 
-  const [pagesCount, setPagesCount] = useState(0);
   //init pagination buttons
+  const [pagesCount, setPagesCount] = useState(totalPagesCount);
   const pagesArray = getPagesArray(pagesCount);
 
-
-  const data = useMemo(() => {
-      dispatch(fetchCategories());
-      dispatch(fetchBooks(currentPage));
-  }, []);
-
-
-  // const fetch = useCallback(() => {
-  //   dispatch(fetchCategories());
-  //   dispatch(fetchBooks(currentPage));
-  // }, [currentPage]);
-
-  const fetch = () => {
-      dispatch(fetchCategories());
-      dispatch(fetchBooks(currentPage));
-    }
-
-
   useEffect(() => {
+    if (!categories.length) dispatch(fetchCategories());
+    if (!books.length) dispatch(fetchBooks(currentPage));
 
-  }, []);
-
-  // useEffect(() => {
-  //   setPagesCount(totalPagesCount);
-  //
-  // }, [books]);
+    setPagesCount(totalPagesCount);
+  }, [totalPagesCount]);
 
   return (
     <main className="main">
       <div className="container">
         <h3 className="text-center mt-4">Home page</h3>
-        <button
-          onClick={() => setCounter(counter + 1)}
-        >Click</button>
         <div className="row mt-4">
           <ul className="list-group col-3">
             <li className="list-group-item">Categories:</li>

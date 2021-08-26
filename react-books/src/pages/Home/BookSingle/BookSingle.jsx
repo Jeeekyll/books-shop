@@ -8,18 +8,14 @@ const BookSingle = () => {
   const {slug} = useParams();
   const dispatch = useDispatch();
 
-  const {currentBook, isFetching, isExists} = useSelector(({books}) => ({
+  const {currentBook, isFetching} = useSelector(({books}) => ({
     currentBook: books.currentBook,
-    isExists: books.currentBook.slug,
     isFetching: books.isFetching,
   }));
 
   useEffect(() => {
-    if (!isExists || isExists !== slug) dispatch(fetchBook(slug));
-
+    dispatch(fetchBook(slug));
   }, []);
-
-  console.log(currentBook)
 
   return (
     <section className="book-single">
@@ -41,7 +37,7 @@ const BookSingle = () => {
             </h6>
             <h6>
               Category:
-              <Link className="ml-1" to={"/category/" + currentBook?.category?.slug}>
+              <Link className="ml-1" to={"/categories/" + currentBook?.category?.slug}>
                 {currentBook?.category?.name}
               </Link>
             </h6>
@@ -55,7 +51,7 @@ const BookSingle = () => {
               <div className="tags">
                 <h6>Books tags: </h6>
                 {currentBook.tags.map(tag =>
-                  <Link to={"/tags/" + tag.slug} className="btn btn-primary mr-2">
+                  <Link to={"/tags/" + tag.slug} className="btn btn-primary mr-2" key={tag.id}>
                     {tag.name}
                   </Link>
                 )}
@@ -63,7 +59,6 @@ const BookSingle = () => {
               :
               ''
             }
-
           </>
         }
       </div>
