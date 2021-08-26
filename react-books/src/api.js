@@ -84,8 +84,9 @@ export const categoriesAPI = {
   },
 
   getCategory: async (slug) => {
-    //const response =
-  }
+    const response = await axiosInstance.get('/api/categories/' + slug);
+    return response.data;
+  },
 
 }
 

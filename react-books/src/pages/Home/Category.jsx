@@ -5,7 +5,7 @@ const Category = ({name, books_count, slug}) => {
   return (
     <li className="list-group-item">
       <div>
-        <Link to={"categories/" + slug}>
+        <Link to={"/categories/" + slug}>
           {name} ({books_count})
         </Link>
       </div>
