@@ -1,24 +1,25 @@
 import React, {useEffect, useState} from "react";
-import {fetchBooks} from "../../store/books";
+import {fetchBooks} from "../../store/reducers/books";
 import {useDispatch, useSelector} from "react-redux";
 import {getPagesArray} from "../../utils/pages";
-import {fetchCategories} from "../../store/categories";
 import Book from "./Book";
-import Category from "./Category";
 import classNames from "classnames";
+import BooksPreloader from "../../components/preloaders/BooksPreloader";
+import Sidebar from "../../components/Sidebar";
 
 const Home = () => {
   const dispatch = useDispatch();
 
   const {
-    isFetching, books, currentPage, totalPagesCount, categories
-  } = useSelector(({books, user, categories}) => ({
+    isBooksFetching, books, currentPage, totalPagesCount, categories, isCategoriesFetching
+  } = useSelector(({books, categories}) => ({
     books: books.books,
     currentPage: books.pagination.page,
     totalPagesCount: books.pagination.totalPagesCount,
-    isFetching: books.isFetching,
+    isBooksFetching: books.isFetching,
 
     categories: categories.categories,
+    isCategoriesFetching: categories.isLoading
   }));
 
   //init pagination buttons
@@ -26,9 +27,7 @@ const Home = () => {
   const pagesArray = getPagesArray(pagesCount);
 
   useEffect(() => {
-    if (!categories.length) dispatch(fetchCategories());
     if (!books.length) dispatch(fetchBooks(currentPage));
-
     setPagesCount(totalPagesCount);
   }, [totalPagesCount]);
 
@@ -37,17 +36,17 @@ const Home = () => {
       <div className="container">
         <h3 className="text-center mt-4">Home page</h3>
         <div className="row mt-4">
-          <ul className="list-group col-3">
-            <li className="list-group-item">Categories:</li>
-            {categories && categories.map(category =>
-              <Category key={category.id} {...category}/>
-            )}
-          </ul>
+
+          <Sidebar
+            categories={categories}
+            isFetching={isCategoriesFetching}
+          />
 
           <div className="books col-9 ml-auto">
-            {isFetching
+            {isBooksFetching
               ?
-              <p>Loading...</p>
+              Array(3).fill(0).map((loader, index) =>
+                <BooksPreloader key={index}/>)
               :
               <>
                 {books && books.map(book => (<Book key={book.id} {...book}/>))}
@@ -70,7 +69,6 @@ const Home = () => {
               </>
             }
           </div>
-
         </div>
       </div>
     </main>

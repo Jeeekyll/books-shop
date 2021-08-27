@@ -4,7 +4,7 @@ import {Link} from "react-router-dom";
 import {yupResolver} from '@hookform/resolvers/yup';
 import * as yup from "yup";
 import {useDispatch, useSelector} from "react-redux";
-import {registerUser} from "../../store/user";
+import {registerUser} from "../../store/reducers/user";
 
 const registrationSchema = yup.object().shape({
   name: yup
@@ -25,7 +25,6 @@ const registrationSchema = yup.object().shape({
 
 const Register = () => {
   const dispatch = useDispatch();
-
   const {isLoading} = useSelector(({user}) => ({isLoading: user?.isLoading}));
 
   const {register, handleSubmit, formState: {errors}} = useForm(

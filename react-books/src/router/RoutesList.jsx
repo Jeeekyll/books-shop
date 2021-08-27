@@ -4,6 +4,7 @@ import Register from "../pages/Auth/Register";
 import Login from "../pages/Auth/Login";
 import BookSingle from "../pages/Home/BookSingle/BookSingle";
 import CategorySingle from "../pages/Categories/CategorySingle";
+import User from "../pages/User/User";
 
 export const privateRoutes = [
   {path: '/', component: Home, exact: true},
@@ -11,6 +12,7 @@ export const privateRoutes = [
 
   {path: '/books/:slug', component: BookSingle, exact: true},
   {path: '/categories/:slug', component: CategorySingle, exact: true},
+  {path: '/user', component: User, exact: true}
 ];
 
 export const publicRoutes = [

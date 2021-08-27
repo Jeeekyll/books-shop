@@ -7,7 +7,6 @@ const Routes = () => {
   const {isLoggedIn} = useSelector(({user}) => ({isLoggedIn: user.user.isLoggedIn}));
 
   return (
-
     isLoggedIn ?
       <Switch>
         {privateRoutes && privateRoutes.map(route =>

@@ -51,6 +51,17 @@ export const userAPI = {
     return response.data;
   },
 
+  getAuthUser: async (token) => {
+    await getCsrfToken();
+    const response = await axiosInstance
+      .get('api/user', {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        }
+      });
+    return response.data;
+  }
+
 };
 
 //BOOKS endpoints methods
@@ -70,7 +81,6 @@ export const booksAPI = {
       .get(`api/books/${slug}`);
     return response.data;
   },
-
 
 }
 

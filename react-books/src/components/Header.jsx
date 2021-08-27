@@ -1,19 +1,13 @@
-import React, {useEffect, useState} from "react";
+import React, {memo} from "react";
 import {Link, NavLink} from "react-router-dom";
 import {useSelector} from "react-redux";
 import Logout from "../pages/Auth/Logout";
 
-
 const Header = () => {
-  const {user, isLoggedIn, isLoading} = useSelector(({user}) => ({
-    user: user.user,
-    isLoggedIn: user.user.isLoggedIn,
-    isLoading: user?.isLoading,
+  const {email, isLoggedIn} = useSelector(({user}) => ({
+    email: user.user?.email,
+    isLoggedIn: user.user?.isLoggedIn,
   }));
-
-  const [render, setRender] = useState(0);
-
-  console.log(render)
 
   return (
     <>
@@ -33,32 +27,29 @@ const Header = () => {
                 About
               </NavLink>
             </li>
-            {isLoading ?
-              <li className="nav-item">
-                <div className="nav-link">Loading...</div>
-              </li>
+
+            {isLoggedIn ?
+              <>
+                <li className="nav-item">
+                  <Link to={"/user"} className="nav-link">{email}</Link>
+                </li>
+                <li className="nav-item">
+                  <Logout/>
+                </li>
+
+              </>
               :
               <>
-                {
-                  isLoggedIn ?
-                    <>
-                      <a href="/" className="nav-link">{user && user.email}</a>
-                      <Logout/>
-                    </>
-                    :
-                    <>
-                      <li className="nav-item">
-                        <NavLink className="nav-link" to="/register">
-                          Register
-                        </NavLink>
-                      </li>
-                      <li className="nav-item">
-                        <NavLink className="nav-link" to="/login">
-                          Login
-                        </NavLink>
-                      </li>
-                    </>
-                }
+                <li className="nav-item">
+                  <NavLink className="nav-link" to="/register">
+                    Register
+                  </NavLink>
+                </li>
+                <li className="nav-item">
+                  <NavLink className="nav-link" to="/login">
+                    Login
+                  </NavLink>
+                </li>
               </>
             }
           </ul>
@@ -68,4 +59,4 @@ const Header = () => {
   );
 }
 
-export default Header;
+export default memo(Header);

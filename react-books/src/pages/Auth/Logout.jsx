@@ -1,21 +1,23 @@
 import React from "react";
-import {logoutUser} from "../../store/user";
+import {logoutUser} from "../../store/reducers/user";
 import {useDispatch} from "react-redux";
 import useLocalStorage from "../../hooks/useLocalStorage";
 
 const Logout = () => {
   const dispatch = useDispatch();
   const [token] = useLocalStorage('token');
+
   const handleSubmit = async () => {
     dispatch(logoutUser(token));
   };
 
   return (
-    <button
-      className="btn btn-danger btn-sm"
+    <div
+      role="button"
+      className="nav-link text-danger"
       onClick={() => handleSubmit()}>
       Logout
-    </button>
+    </div>
   );
 }
 

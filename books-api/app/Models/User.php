@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Carbon\Carbon;
 use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -45,5 +46,11 @@ class User extends Authenticatable
     public function books()
     {
         return $this->hasMany(Book::class);
+    }
+
+    public function getUserDate()
+    {
+        return Carbon::createFromFormat('Y-m-d H:i:s', $this->created_at)
+            ->format('d F, Y');
     }
 }

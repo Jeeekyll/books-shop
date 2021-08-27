@@ -2,8 +2,9 @@
 
 use App\Http\Controllers\Api\BooksController;
 use App\Http\Controllers\Api\CategoriesController;
+use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\AuthController;
-use Illuminate\Http\Request;
+
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -31,11 +32,15 @@ Route::get('books/{slug}', [BooksController::class, 'show']);
 Route::get('categories', [CategoriesController::class, 'index']);
 Route::get('categories/{slug}', [CategoriesController::class, 'show']);
 
+
 //Protected routes
 Route::group(['middleware' => ['auth:sanctum']], function () {
     //auth routes
     Route::get('me', [AuthController::class, 'getCurrentUser']);
     Route::post('logout', [AuthController::class, 'logout']);
+
+    //user routes
+    Route::get('user', [UserController::class, 'index']);
 
     //books routes
     //Route::apiResource('books', BooksController::class);
