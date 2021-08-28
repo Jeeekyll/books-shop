@@ -1,10 +1,10 @@
-import {useEffect} from "react";
-import {fetchCategories} from "../store/reducers/categories";
+import React, {useEffect} from "react";
 import {useDispatch, useSelector} from "react-redux";
+import {fetchCategories} from "../store/categoriesSlice";
 
 const RootContainer = ({children}) => {
   const dispatch = useDispatch();
-  const {categories} = useSelector(({categories}) => ({categories: categories.categories}));
+  const categories = useSelector((state) => state.categories.categories);
 
   useEffect(() => {
     if (!categories.length) {

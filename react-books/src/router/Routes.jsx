@@ -4,7 +4,7 @@ import {privateRoutes, publicRoutes} from "./RoutesList";
 import {useSelector} from "react-redux";
 
 const Routes = () => {
-  const {isLoggedIn} = useSelector(({user}) => ({isLoggedIn: user.user.isLoggedIn}));
+  const {isLoggedIn} = useSelector(({user}) => ({isLoggedIn: user.isLoggedIn}));
 
   return (
     isLoggedIn ?

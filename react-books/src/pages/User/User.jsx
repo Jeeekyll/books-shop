@@ -1,13 +1,14 @@
 import React, {useEffect} from "react";
 import {useDispatch, useSelector} from "react-redux";
-import {fetchAuthUser} from "../../store/reducers/authUser";
 import BooksPreloader from "../../components/preloaders/BooksPreloader";
 import {Link} from "react-router-dom";
+import {fetchAuthUser} from "../../store/authUserSlice";
 
 const User = () => {
   const dispatch = useDispatch();
-  const {user, isLoading, error} = useSelector(({authUser}) => ({
-    user: authUser.authUser,
+
+  const {user, isLoading} = useSelector(({authUser}) => ({
+    user: authUser.user,
     isLoading: authUser.isLoading,
     error: authUser.error,
   }));
@@ -16,8 +17,7 @@ const User = () => {
 
   useEffect(() => {
     dispatch(fetchAuthUser());
-  }, [])
-
+  }, []);
 
   return (
     <section className="user">
@@ -31,7 +31,7 @@ const User = () => {
                 <h3 className="text-center">
                   {nickname} profile
                 </h3>
-                <p className="lead">Your info:</p>
+                <p className="lead mt-4">Your personal data:</p>
                 <div>Nickname: {nickname}</div>
                 <div>Email: {email}</div>
                 <div>Registration date: {created_at}</div>
@@ -40,7 +40,9 @@ const User = () => {
                   <ul className="list-group mt-4">
                     <h5>Your books: </h5>
                     {books.map(book =>
-                      <li className="list-group-item d-flex justify-content-between">
+                      <li
+                        key={book.id}
+                        className="list-group-item d-flex justify-content-between">
                         {book.title}
                         <Link to={"/books/" + book.slug}>
                           Read more
@@ -52,13 +54,9 @@ const User = () => {
                   <p>You dont have any books</p>
                 }
               </>
-
-
             }
           </div>
-
         </div>
-
       </div>
     </section>
   );

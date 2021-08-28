@@ -1,10 +1,10 @@
 import React from "react";
 import {useForm} from "react-hook-form";
-import {Link, Redirect} from "react-router-dom";
+import {Link} from "react-router-dom";
 import {yupResolver} from '@hookform/resolvers/yup';
 import * as yup from "yup";
 import {useDispatch, useSelector} from "react-redux";
-import {loginUser} from "../../store/reducers/user";
+import {login} from "../../store/userSlice";
 import BackendErrors from "../../components/BackendErrors";
 
 const loginSchema = yup.object().shape({
@@ -21,9 +21,9 @@ const loginSchema = yup.object().shape({
 const Login = () => {
   const dispatch = useDispatch();
 
-  const {isLoading, isLoggedIn} = useSelector(({user}) => ({
-    isLoading: user?.isLoading,
-    isLoggedIn: user.user.isLoggedIn,
+  const {isLoading, error} = useSelector(({user}) => ({
+    isLoading: user.isLoading,
+    error: user.error,
   }));
 
   const {register, handleSubmit, formState: {errors}} = useForm(
@@ -31,11 +31,7 @@ const Login = () => {
   );
 
   const onSubmit = async data => {
-    dispatch(loginUser(data));
-  }
-
-  if (isLoggedIn) {
-    return <Redirect to="/"/>
+    dispatch(login(data));
   }
 
   return (
@@ -50,7 +46,7 @@ const Login = () => {
                     <h2 className="text-uppercase text-center mb-5">Login</h2>
 
                     <form onSubmit={handleSubmit(onSubmit)}>
-                      {/*{error && <BackendErrors errors={error}/>}*/}
+                      {error && <BackendErrors errors={error}/>}
 
                       <div className="form-outline mb-4">
                         <input

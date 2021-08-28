@@ -1,25 +1,27 @@
 import React, {useEffect, useState} from "react";
-import {fetchBooks} from "../../store/reducers/books";
 import {useDispatch, useSelector} from "react-redux";
 import {getPagesArray} from "../../utils/pages";
 import Book from "./Book";
 import classNames from "classnames";
 import BooksPreloader from "../../components/preloaders/BooksPreloader";
 import Sidebar from "../../components/Sidebar";
+import {fetchBooks} from "../../store/booksSlice";
 
 const Home = () => {
   const dispatch = useDispatch();
 
   const {
-    isBooksFetching, books, currentPage, totalPagesCount, categories, isCategoriesFetching
+    books, isBooksLoading, currentPage,
+    totalPagesCount, categories, isCategoriesLoading
   } = useSelector(({books, categories}) => ({
     books: books.books,
-    currentPage: books.pagination.page,
-    totalPagesCount: books.pagination.totalPagesCount,
-    isBooksFetching: books.isFetching,
+    currentPage: books.pagination?.page,
+    totalPagesCount: books.pagination?.totalPagesCount,
+    isBooksLoading: books.isLoading,
 
     categories: categories.categories,
-    isCategoriesFetching: categories.isLoading
+    isCategoriesLoading: categories.isLoading,
+
   }));
 
   //init pagination buttons
@@ -34,22 +36,22 @@ const Home = () => {
   return (
     <main className="main">
       <div className="container">
-        <h3 className="text-center mt-4">Home page</h3>
+        <h3 className="text-center mt-4">Our books</h3>
         <div className="row mt-4">
 
           <Sidebar
             categories={categories}
-            isFetching={isCategoriesFetching}
+            isFetching={isCategoriesLoading}
           />
 
           <div className="books col-9 ml-auto">
-            {isBooksFetching
+            {isBooksLoading
               ?
               Array(3).fill(0).map((loader, index) =>
                 <BooksPreloader key={index}/>)
               :
               <>
-                {books && books.map(book => (<Book key={book.id} {...book}/>))}
+                {!!Object.keys(books).length && books.map(book => (<Book key={book.id} {...book}/>))}
 
                 <ul className="pagination pagination">
                   {pagesArray && pagesArray.map((page, index) => (

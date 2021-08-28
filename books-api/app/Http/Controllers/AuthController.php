@@ -50,7 +50,9 @@ class AuthController extends Controller
         $user = $request->only('email', 'password');
         if (!Auth::attempt($user)) {
             return response([
-                'message' => 'Wrong login or password!',
+                'errors' => [
+                    'fields' => 'Wrong login or password!'
+                ],
             ], 401);
         }
 
@@ -63,7 +65,8 @@ class AuthController extends Controller
         return response($response, 201);
     }
 
-    public function getCurrentUser(Request $request) {
+    public function getCurrentUser(Request $request)
+    {
         return auth()->user();
     }
 }

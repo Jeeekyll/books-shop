@@ -1,14 +1,12 @@
 import React from "react";
-import {logoutUser} from "../../store/reducers/user";
 import {useDispatch} from "react-redux";
-import useLocalStorage from "../../hooks/useLocalStorage";
+import {logout} from "../../store/userSlice";
 
 const Logout = () => {
   const dispatch = useDispatch();
-  const [token] = useLocalStorage('token');
 
   const handleSubmit = async () => {
-    dispatch(logoutUser(token));
+    dispatch(logout());
   };
 
   return (

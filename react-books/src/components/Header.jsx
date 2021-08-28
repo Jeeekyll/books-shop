@@ -5,8 +5,8 @@ import Logout from "../pages/Auth/Logout";
 
 const Header = () => {
   const {email, isLoggedIn} = useSelector(({user}) => ({
-    email: user.user?.email,
-    isLoggedIn: user.user?.isLoggedIn,
+    email: user.user.email,
+    isLoggedIn: user.isLoggedIn,
   }));
 
   return (

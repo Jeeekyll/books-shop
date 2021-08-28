@@ -1,21 +1,21 @@
 import React, {useEffect} from "react";
 import {useParams} from "react-router";
 import {useDispatch, useSelector} from "react-redux";
-import {fetchCategory} from "../../store/reducers/categories";
 import Book from "../Home/Book";
 import Sidebar from "../../components/Sidebar";
 import BooksPreloader from "../../components/preloaders/BooksPreloader";
-
+import {fetchCategory} from "../../store/categoriesSlice";
 
 const CategorySingle = () => {
   const {slug} = useParams();
   const dispatch = useDispatch();
 
-  const {category, isLoading, categories, isCurrentLoading} = useSelector(({categories}) => ({
+  const {category, categories, isLoading, isLoadingCurrent} = useSelector(({categories}) => ({
     isLoading: categories.isLoading,
-    isCurrentLoading: categories.isCurrentLoading,
-    category: categories.currentCategory,
     categories: categories.categories,
+
+    isLoadingCurrent: categories.currentCategory.isLoading,
+    category: categories.currentCategory,
   }));
 
   const {name, books} = category;
@@ -35,7 +35,7 @@ const CategorySingle = () => {
             isFetching={isLoading}
           />
 
-          {isCurrentLoading
+          {isLoadingCurrent
             ?
             <BooksPreloader/>
             :
@@ -43,7 +43,6 @@ const CategorySingle = () => {
               {books && books.map(book => (<Book key={book.id} {...book}/>))}
             </div>
           }
-
 
         </div>
       </div>

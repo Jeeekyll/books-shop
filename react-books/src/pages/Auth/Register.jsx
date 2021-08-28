@@ -4,7 +4,8 @@ import {Link} from "react-router-dom";
 import {yupResolver} from '@hookform/resolvers/yup';
 import * as yup from "yup";
 import {useDispatch, useSelector} from "react-redux";
-import {registerUser} from "../../store/reducers/user";
+import {register as registerUser} from "../../store/userSlice";
+import BackendErrors from "../../components/BackendErrors";
 
 const registrationSchema = yup.object().shape({
   name: yup
@@ -25,7 +26,10 @@ const registrationSchema = yup.object().shape({
 
 const Register = () => {
   const dispatch = useDispatch();
-  const {isLoading} = useSelector(({user}) => ({isLoading: user?.isLoading}));
+  const {isLoading, error} = useSelector(({user}) => ({
+    isLoading: user.isLoading,
+    error: user.error,
+  }));
 
   const {register, handleSubmit, formState: {errors}} = useForm(
     {resolver: yupResolver(registrationSchema)}
@@ -47,7 +51,7 @@ const Register = () => {
                     <h2 className="text-uppercase text-center mb-5">Create an account</h2>
 
                     <form onSubmit={handleSubmit(onSubmit)}>
-                      {/*{error && <BackendErrors errors={error}/>}*/}
+                      {error && <BackendErrors errors={error}/>}
 
                       <div className="form-outline mb-4">
                         <input

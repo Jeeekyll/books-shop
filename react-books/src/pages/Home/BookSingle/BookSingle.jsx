@@ -1,17 +1,17 @@
 import React, {useEffect} from "react";
 import {useParams} from "react-router";
 import {useDispatch, useSelector} from "react-redux";
-import {fetchBook} from "../../../store/reducers/books";
 import {Link} from "react-router-dom";
 import BooksPreloader from "../../../components/preloaders/BooksPreloader";
+import {fetchBook} from "../../../store/booksSlice";
 
 const BookSingle = () => {
   const {slug} = useParams();
   const dispatch = useDispatch();
 
-  const {currentBook, isFetching} = useSelector(({books}) => ({
+  const {currentBook, isLoading} = useSelector(({books}) => ({
     currentBook: books.currentBook,
-    isFetching: books.isFetching,
+    isLoading: books.currentBook.isLoading,
   }));
 
   useEffect(() => {
@@ -27,7 +27,7 @@ const BookSingle = () => {
     <section className="book-single">
       <div className="container">
         <div className="row pt-4">
-          {isFetching ?
+          {isLoading ?
             <BooksPreloader className="m-auto col-8"/>
             :
             <div className="book-single col-8 m-auto">

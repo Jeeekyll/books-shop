@@ -1,7 +1,7 @@
 import React, {useEffect} from "react";
 import {useDispatch} from "react-redux";
 import useLocalStorage from "../hooks/useLocalStorage";
-import {fetchUser} from "../store/reducers/user";
+import {fetchUser} from "../store/userSlice";
 
 const CurrentUserChecker = ({children}) => {
   const dispatch = useDispatch();
@@ -11,7 +11,7 @@ const CurrentUserChecker = ({children}) => {
     dispatch(fetchUser(token));
   }, []);
 
-  return  children;
+  return children;
 }
 
 export default CurrentUserChecker;

@@ -1,8 +1,8 @@
 import React from "react";
 
 const BackendErrors = ({errors}) => {
-  const errorsArray = Object.keys(errors).map(e => {
-    return errors[e];
+  const errorsArray = Object.keys(errors).map(errorKey => {
+    return errors[errorKey];
   });
 
   return (
