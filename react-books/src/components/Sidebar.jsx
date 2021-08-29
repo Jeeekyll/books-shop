@@ -1,10 +1,10 @@
-import React from "react";
+import React, {memo} from "react";
 import SidebarPreloader from "./preloaders/SidebarPreloader";
 import Category from "../pages/Home/Category";
 
 const Sidebar = ({categories, isFetching}) => {
   return (
-    <ul className="list-group col-3">
+    <ul className="list-group col-3 mt-4">
       {isFetching
         ?
         Array(3).fill(0).map((loader, index) =>
@@ -21,4 +21,4 @@ const Sidebar = ({categories, isFetching}) => {
   )
 };
 
-export default Sidebar;
+export default memo(Sidebar);

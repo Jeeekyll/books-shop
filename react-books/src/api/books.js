@@ -4,11 +4,12 @@ import {axiosInstance} from "./index";
 const endpoint = 'books';
 
 export const booksAPI = {
-  getBooks: async (page = 1) => {
+  getBooks: async (page = 1, sort = 'date') => {
     const response = await axiosInstance
       .get(endpoint, {
         params: {
           page: page,
+          sort: sort,
         }
       });
     return response.data;

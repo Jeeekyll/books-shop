@@ -3,10 +3,10 @@ import {booksAPI} from "../api/books";
 
 export const fetchBooks = createAsyncThunk(
   'books/fetchBooks',
-  async (page, {dispatch, rejectWithValue}) => {
+  async (params, {dispatch, rejectWithValue}) => {
     try {
-      const response = await booksAPI.getBooks(page);
-
+      const {page, sortingParam} = params;
+      const response = await booksAPI.getBooks(page, sortingParam);
       dispatch(setBooks({
         books: response.data,
         pagination: {
@@ -50,6 +50,8 @@ const booksSlice = createSlice({
     error: null,
     isLoading: false,
     pagination: {},
+    sortingParam: 'date',
+
     currentBook: {
       error: null,
       isLoading: false,
@@ -65,6 +67,9 @@ const booksSlice = createSlice({
     setBook(state, action) {
       state.currentBook = action.payload;
     },
+    setSortingParam(state, action) {
+      state.sortingParam = action.payload;
+    }
   },
 
   extraReducers: {
@@ -90,4 +95,6 @@ const booksSlice = createSlice({
 });
 
 const {setBooks, setBook} = booksSlice.actions;
+export const {setSortingParam} = booksSlice.actions;
+
 export default booksSlice.reducer;

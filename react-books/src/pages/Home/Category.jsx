@@ -1,4 +1,4 @@
-import React from "react";
+import React, {memo} from "react";
 import {Link} from "react-router-dom";
 
 const Category = ({name, books_count, slug}) => {
@@ -11,4 +11,4 @@ const Category = ({name, books_count, slug}) => {
   );
 }
 
-export default Category;
+export default memo(Category);

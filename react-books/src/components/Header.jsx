@@ -1,13 +1,13 @@
 import React, {memo} from "react";
 import {Link, NavLink} from "react-router-dom";
-import {useSelector} from "react-redux";
+import {shallowEqual, useSelector} from "react-redux";
 import Logout from "../pages/Auth/Logout";
 
 const Header = () => {
   const {email, isLoggedIn} = useSelector(({user}) => ({
     email: user.user.email,
     isLoggedIn: user.isLoggedIn,
-  }));
+  }), shallowEqual);
 
   return (
     <>

@@ -21,7 +21,7 @@ class BookResource extends JsonResource
             'pages' => $this->pages,
             'rating' => $this->rating,
             'slug' => $this->slug,
-            'created_at' => $this->getBookDate(),
+            'created_at' => $this->created_at,
         ];
     }
 }

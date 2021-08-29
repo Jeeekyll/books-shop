@@ -4,11 +4,10 @@ import App from './App';
 import {Provider} from "react-redux";
 import index from "./store";
 
+
 ReactDOM.render(
-  <React.StrictMode>
-    <Provider store={index}>
-      <App/>
-    </Provider>
-  </React.StrictMode>,
+  <Provider store={index}>
+    <App/>
+  </Provider>,
   document.getElementById('root')
 );

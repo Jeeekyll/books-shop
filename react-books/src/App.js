@@ -5,6 +5,7 @@ import Routes from "./router/Routes";
 import CurrentUserChecker from "./components/CurrentUserChecker";
 import RootContainer from "./components/RootContainer";
 
+
 const App = () => {
   return (
     <CurrentUserChecker>
