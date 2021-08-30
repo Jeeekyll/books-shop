@@ -1,6 +1,6 @@
 import React, {memo} from "react";
 import SidebarPreloader from "./preloaders/SidebarPreloader";
-import Category from "../pages/Home/Category";
+import Category from "../pages/Categories/Category";
 
 const Sidebar = ({categories, isFetching}) => {
   return (

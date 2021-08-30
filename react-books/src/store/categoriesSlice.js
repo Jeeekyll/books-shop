@@ -15,12 +15,20 @@ export const fetchCategories = createAsyncThunk(
 
 export const fetchCategory = createAsyncThunk(
   'categories/fetchCategory',
-  async (slug, {dispatch, rejectWithValue}) => {
+  async (params, {dispatch, rejectWithValue}) => {
+    const {slug, page} = params;
     if (!slug) throw new Error('Invalid slug');
 
     try {
-      const response = await categoriesAPI.getCategory(slug);
-      dispatch(setCategory(response.data));
+      const response = await categoriesAPI.getCategory(slug, page);
+      dispatch(setCategory({
+        books: response.books.data,
+        pagination: {
+          totalPagesCount: response.books.last_page,
+          page: response.books.current_page,
+        },
+        ...response.category,
+      }));
     } catch (error) {
       return rejectWithValue(error.message);
     }
@@ -47,6 +55,7 @@ const categoriesSlice = createSlice({
     currentCategory: {
       isLoading: false,
       error: null,
+      pagination: {},
     },
   },
 
@@ -56,6 +65,7 @@ const categoriesSlice = createSlice({
     },
     setCategory(state, action) {
       state.currentCategory = action.payload;
+      state.currentCategory.pagination = action.payload.pagination;
     }
   },
 

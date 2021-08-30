@@ -7,17 +7,20 @@ use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Builder;
+use Cviebrock\EloquentSluggable\Sluggable;
 
 
 class Book extends Model
 {
-    use HasFactory;
+    use HasFactory, Sluggable;
 
     protected $fillable = [
         'title',
         'description',
         'pages',
         'rating',
+        'category_id',
+        'user_id',
     ];
 
     public function user()
@@ -40,9 +43,19 @@ class Book extends Model
         return $filter->apply($builder);
     }
 
+
     public function getBookDate()
     {
         return Carbon::createFromFormat('Y-m-d H:i:s', $this->created_at)
             ->format('d F, Y');
+    }
+
+    public function sluggable()
+    {
+        return [
+            'slug' => [
+                'source' => 'title'
+            ]
+        ];
     }
 }

@@ -10,8 +10,12 @@ export const categoriesAPI = {
     return response.data;
   },
 
-  getCategory: async (slug) => {
-    const response = await axiosInstance.get(`${endpoint}/${slug}`);
+  getCategory: async (slug, page = 1) => {
+    const response = await axiosInstance.get(`${endpoint}/${slug}`, {
+      params: {
+        page: page,
+      }
+    });
     return response.data;
   },
 }

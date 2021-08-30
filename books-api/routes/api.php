@@ -27,11 +27,11 @@ Route::post('login', [AuthController::class, 'login']);
 //books routes
 Route::get('books', [BooksController::class, 'index']);
 Route::get('books/{slug}', [BooksController::class, 'show']);
+Route::get('books/search/{name}', [BooksController::class, 'search']);
 
 //categories routes
 Route::get('categories', [CategoriesController::class, 'index']);
 Route::get('categories/{slug}', [CategoriesController::class, 'show']);
-
 
 //Protected routes
 Route::group(['middleware' => ['auth:sanctum']], function () {
@@ -43,8 +43,10 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::get('user', [UserController::class, 'index']);
 
     //books routes
-    //Route::apiResource('books', BooksController::class);
-    Route::get('books/search/{name}', [BooksController::class, 'search']);
+    Route::post('books', [BooksController::class, 'store']);
+    Route::put('books/{id}', [BooksController::class, 'update']);
+    Route::delete('books/{id}', [BooksController::class, 'destroy']);
+
 });
 
 //Route::get('books', function (Request $request) {

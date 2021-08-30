@@ -2,8 +2,8 @@ import About from "../pages/About/About";
 import Home from "../pages/Home/Home";
 import Register from "../pages/Auth/Register";
 import Login from "../pages/Auth/Login";
-import BookSingle from "../pages/Home/BookSingle/BookSingle";
-import CategorySingle from "../pages/Categories/CategorySingle";
+import BookSingle from "../pages/Books/BookSingle/BookSingle";
+import CategorySingle from "../pages/Categories/CategorySingle/CategorySingle";
 import User from "../pages/User/User";
 
 export const privateRoutes = [

@@ -12,8 +12,11 @@ class BookResource extends JsonResource
      * @param \Illuminate\Http\Request $request
      * @return array
      */
+
+
     public function toArray($request)
     {
+
         return [
             'id' => $this->id,
             'title' => $this->title,
@@ -24,4 +27,5 @@ class BookResource extends JsonResource
             'created_at' => $this->created_at,
         ];
     }
+
 }

@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Http\Resources\CategoryResource;
+use App\Models\Book;
 use App\Models\Category;
 
 class CategoriesController extends Controller
@@ -21,8 +21,16 @@ class CategoriesController extends Controller
 
     public function show($slug)
     {
-        return new CategoryResource(
-            Category::query()->firstWhere('slug', $slug)
-        );
+        $category = Category::query()->firstWhere('slug', $slug);
+        $books = Book::query()->where(
+            'category_id', $category->id)->paginate(4);
+
+        return response([
+            'category' => $category,
+            'books' => $books
+        ]);
+//        return new CategoryResource(
+//            Category::query()->firstWhere('slug', $slug)
+//        );
     }
 }

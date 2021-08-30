@@ -3,6 +3,7 @@ import ContentLoader from "react-content-loader"
 
 const BooksPreloader = (props) => (
   <ContentLoader
+    className="mt-2"
     speed={2}
     width={700}
     height={190}
