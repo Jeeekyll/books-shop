@@ -1,10 +1,14 @@
-import React from "react";
+import React, { memo } from "react";
 import Modal from "react-bootstrap/Modal";
-import { fetchRemoveBook } from "../../store/authUserSlice";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchRemoveBook } from "../../../store/booksSlice";
 
 const UserDeleteBook = ({ id, show, setShow }) => {
   const dispatch = useDispatch();
+
+  const { isLoading } = useSelector(({ books }) => ({
+    isLoading: books.isLoading,
+  }));
 
   return (
     <Modal show={show} onHide={() => setShow(false)}>
@@ -14,6 +18,7 @@ const UserDeleteBook = ({ id, show, setShow }) => {
       <Modal.Body>Are you sure?</Modal.Body>
       <Modal.Footer>
         <button
+          disabled={isLoading}
           className="btn btn-danger mt-4"
           onClick={() => {
             dispatch(fetchRemoveBook(id));
@@ -26,4 +31,4 @@ const UserDeleteBook = ({ id, show, setShow }) => {
   );
 };
 
-export default UserDeleteBook;
+export default memo(UserDeleteBook);

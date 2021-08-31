@@ -21,6 +21,7 @@ class Book extends Model
         'rating',
         'category_id',
         'user_id',
+        'image',
     ];
 
     public function user()

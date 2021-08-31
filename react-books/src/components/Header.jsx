@@ -1,13 +1,16 @@
-import React, {memo} from "react";
-import {Link, NavLink} from "react-router-dom";
-import {shallowEqual, useSelector} from "react-redux";
+import React, { memo } from "react";
+import { Link, NavLink } from "react-router-dom";
+import { shallowEqual, useSelector } from "react-redux";
 import Logout from "../pages/Auth/Logout";
 
 const Header = () => {
-  const {email, isLoggedIn} = useSelector(({user}) => ({
-    email: user.user.email,
-    isLoggedIn: user.isLoggedIn,
-  }), shallowEqual);
+  const { email, isLoggedIn } = useSelector(
+    ({ user }) => ({
+      email: user.user.email,
+      isLoggedIn: user.isLoggedIn,
+    }),
+    shallowEqual
+  );
 
   return (
     <>
@@ -22,23 +25,19 @@ const Header = () => {
                 Home
               </NavLink>
             </li>
-            <li className="nav-item">
-              <NavLink className="nav-link" to="/about">
-                About
-              </NavLink>
-            </li>
 
-            {isLoggedIn ?
+            {isLoggedIn ? (
               <>
                 <li className="nav-item">
-                  <Link to={"/user"} className="nav-link">{email}</Link>
+                  <Link to={"/user"} className="nav-link">
+                    {email}
+                  </Link>
                 </li>
                 <li className="nav-item">
-                  <Logout/>
+                  <Logout />
                 </li>
-
               </>
-              :
+            ) : (
               <>
                 <li className="nav-item">
                   <NavLink className="nav-link" to="/register">
@@ -51,12 +50,12 @@ const Header = () => {
                   </NavLink>
                 </li>
               </>
-            }
+            )}
           </ul>
         </div>
       </nav>
     </>
   );
-}
+};
 
 export default memo(Header);

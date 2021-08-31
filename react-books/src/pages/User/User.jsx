@@ -1,23 +1,21 @@
 import React, { useEffect, useState } from "react";
 import { shallowEqual, useDispatch, useSelector } from "react-redux";
 import BooksPreloader from "../../components/preloaders/BooksPreloader";
-import { Link } from "react-router-dom";
-import { fetchAuthUser, fetchRemoveBook } from "../../store/authUserSlice";
-
-import Modal from "react-bootstrap/Modal";
-import Button from "react-bootstrap/Button";
+import { fetchAuthUser } from "../../store/authUserSlice";
 import "bootstrap/dist/css/bootstrap.min.css";
-import UserCreateBook from "./UserCreateBook";
-import UserDeleteBook from "./UserDeleteBook";
+import UserCreateBook from "./UserBookForms/UserCreateBook";
+import UserBookSingle from "./UserBookSingle";
+import { fetchTags } from "../../store/tagsSlice";
 
 const User = () => {
   const dispatch = useDispatch();
 
-  const { user, isLoading } = useSelector(
-    ({ authUser }) => ({
+  const { user, isLoading, tags } = useSelector(
+    ({ authUser, tags }) => ({
       user: authUser.user,
       isLoading: authUser.isLoading,
       error: authUser.error,
+      tags: tags.tags,
     }),
     shallowEqual
   );
@@ -26,11 +24,12 @@ const User = () => {
 
   //modal toggle
   const [showCreateModal, setShowCreateModal] = useState(false);
-  const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const [showUpdateModal, setShowUpdateModal] = useState(false);
 
   useEffect(() => {
     dispatch(fetchAuthUser());
+    if (!tags.length) {
+      dispatch(fetchTags());
+    }
   }, []);
 
   return (
@@ -60,38 +59,8 @@ const User = () => {
                       </button>
                     </div>
 
-                    <UserCreateBook
-                      show={showCreateModal}
-                      setShow={setShowCreateModal}
-                    />
-
                     {books.map((book) => (
-                      <li
-                        key={book.id}
-                        className="list-group-item d-flex justify-content-between"
-                      >
-                        <Link to={"/books/" + book.slug}>{book.title}</Link>
-                        <div className="actions">
-                          <button
-                            className="btn btn-danger btn-sm mr-2"
-                            onClick={() => {
-                              setShowDeleteModal(true);
-                            }}
-                          >
-                            Delete
-                          </button>
-
-                          <UserDeleteBook
-                            show={showDeleteModal}
-                            setShow={setShowDeleteModal}
-                            id={book.id}
-                          />
-
-                          <button className="btn btn-primary btn-sm">
-                            Edit
-                          </button>
-                        </div>
-                      </li>
+                      <UserBookSingle key={book.id} {...book} />
                     ))}
                   </ul>
                 ) : (
@@ -102,6 +71,12 @@ const User = () => {
           </div>
         </div>
       </div>
+
+      <UserCreateBook
+        show={showCreateModal}
+        setShow={setShowCreateModal}
+        tags={tags}
+      />
     </section>
   );
 };

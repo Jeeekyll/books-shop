@@ -1,20 +1,21 @@
-import React, {memo} from "react";
-import {Link} from "react-router-dom";
+import React, { memo } from "react";
+import { Link } from "react-router-dom";
 
-const Book = ({title, description, slug, pages, rating}) => {
+const Book = ({ title, description, slug, pages, rating, image }) => {
   return (
     <article>
       <div>
         <h5>{title}</h5>
-        <p>{description}</p>
-        <div>Pages: {pages} | rating: {rating} </div>
-        <Link to={"/books/" + slug}>
-          Read more
-        </Link>
+        <p>{description.slice(0, 200) + "..."}</p>
+        {image && <img src={image} alt="image" className="img-fluid" />}
+        <div>
+          Pages: {pages} | rating: {rating}{" "}
+        </div>
+        <Link to={"/books/" + slug}>Read more</Link>
       </div>
-      <hr/>
+      <hr />
     </article>
   );
-}
+};
 
 export default memo(Book);

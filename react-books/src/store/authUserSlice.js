@@ -1,6 +1,5 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import { userAPI } from "../api/user";
-import { booksAPI } from "../api/books";
 
 export const fetchAuthUser = createAsyncThunk(
   "authUser/fetchAuthUser",
@@ -11,32 +10,6 @@ export const fetchAuthUser = createAsyncThunk(
       dispatch(setAuthUser(response.data));
     } catch (error) {
       return rejectWithValue(error.message);
-    }
-  }
-);
-
-export const fetchCreateBook = createAsyncThunk(
-  "books/fetchCreateBook",
-  async (data, { dispatch, rejectWithValue }) => {
-    const token = localStorage.getItem("token");
-    try {
-      const response = await booksAPI.createBook(data, token);
-      dispatch(createBook(response.data));
-    } catch (error) {
-      return rejectWithValue(error.response.data.errors);
-    }
-  }
-);
-
-export const fetchRemoveBook = createAsyncThunk(
-  "books/fetchRemoveBook",
-  async (id, { dispatch, rejectWithValue }) => {
-    const token = localStorage.getItem("token");
-    try {
-      await booksAPI.deleteBook(id, token);
-      dispatch(removeBook(id));
-    } catch (error) {
-      return rejectWithValue(error.response.data.errors);
     }
   }
 );
@@ -68,13 +41,20 @@ const authUserSlice = createSlice({
     setAuthUser(state, action) {
       state.user = action.payload;
     },
-    createBook(state, action) {
+
+    createUserBook(state, action) {
       state.user.books.push(action.payload);
     },
-    removeBook(state, action) {
+    removeUserBook(state, action) {
       state.user.books = state.user.books.filter(
         (book) => book.id !== action.payload
       );
+    },
+    updateUserBook(state, action) {
+      const bookIndex = state.user.books.findIndex(
+        (book) => book.id === action.payload.id
+      );
+      state.user.books[bookIndex] = action.payload;
     },
   },
 
@@ -82,16 +62,10 @@ const authUserSlice = createSlice({
     [fetchAuthUser.pending]: setIsLoading,
     [fetchAuthUser.fulfilled]: setIsSuccess,
     [fetchAuthUser.rejected]: setError,
-
-    [fetchCreateBook.pending]: setIsLoading,
-    [fetchCreateBook.fulfilled]: setIsSuccess,
-    [fetchCreateBook.rejected]: setError,
-
-    [fetchRemoveBook.pending]: setIsLoading,
-    [fetchRemoveBook.fulfilled]: setIsSuccess,
-    [fetchRemoveBook.rejected]: setError,
   },
 });
 
-const { setAuthUser, createBook, removeBook } = authUserSlice.actions;
+const { setAuthUser } = authUserSlice.actions;
+export const { createUserBook, removeUserBook, updateUserBook } =
+  authUserSlice.actions;
 export default authUserSlice.reducer;

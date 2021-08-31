@@ -42,4 +42,18 @@ export const booksAPI = {
     });
     return response.data;
   },
+
+  updateBook: async (id, data, token) => {
+    await getCsrfToken();
+    const response = await axiosInstance.put(
+      `${endpoint}/${id}`,
+      { ...data },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    return response.data;
+  },
 };

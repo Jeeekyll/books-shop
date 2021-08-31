@@ -1,11 +1,11 @@
-import React from "react";
+import React, { memo } from "react";
 import Modal from "react-bootstrap/Modal";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
-import BackendErrors from "../../components/BackendErrors";
+import BackendErrors from "../../../components/BackendErrors";
 import { shallowEqual, useDispatch, useSelector } from "react-redux";
-import { fetchCreateBook } from "../../store/authUserSlice";
+import { fetchCreateBook } from "../../../store/booksSlice";
 
 const createBookSchema = yup.object().shape({
   title: yup
@@ -20,19 +20,20 @@ const createBookSchema = yup.object().shape({
   pages: yup
     .number()
     .typeError("Pages count is required")
-    .integer("hh")
+    .integer()
     .positive()
     .lessThan(3000),
   rating: yup.number().typeError("Rating is required").min(0).max(5),
 });
 
-const UserCreateBook = ({ show, setShow }) => {
+const UserCreateBook = ({ show, setShow, tags }) => {
   const dispatch = useDispatch();
 
-  const { userId, categories } = useSelector(
-    ({ user, categories }) => ({
+  const { userId, categories, isLoading } = useSelector(
+    ({ user, categories, books }) => ({
       categories: categories.categories,
       userId: user.user.id,
+      isLoading: books.isLoading,
     }),
     shallowEqual
   );
@@ -48,7 +49,6 @@ const UserCreateBook = ({ show, setShow }) => {
   const onSubmit = (data) => {
     data.user_id = userId;
     dispatch(fetchCreateBook(data));
-    setShow(false);
   };
 
   return (
@@ -61,9 +61,11 @@ const UserCreateBook = ({ show, setShow }) => {
           {/*{error && <BackendErrors errors={error}/>}*/}
 
           <div className="form-group">
+            <label className="form-label" htmlFor="title">
+              Title
+            </label>
             <input
               {...register("title")}
-              placeholder="Title"
               type="text"
               id="title"
               className="form-control form-control"
@@ -76,10 +78,12 @@ const UserCreateBook = ({ show, setShow }) => {
           </div>
 
           <div className="form-group">
+            <label className="form-label" htmlFor="description">
+              Description
+            </label>
             <textarea
               {...register("description")}
               id="description"
-              defaultValue="Description"
               className="form-control"
             ></textarea>
             {errors.description && (
@@ -90,9 +94,11 @@ const UserCreateBook = ({ show, setShow }) => {
           </div>
 
           <div className="form-group">
+            <label className="form-label" htmlFor="pages">
+              Pages count
+            </label>
             <input
               {...register("pages")}
-              placeholder="Pages"
               type="number"
               id="pages"
               className="form-control form-control"
@@ -105,9 +111,11 @@ const UserCreateBook = ({ show, setShow }) => {
           </div>
 
           <div className="form-group">
+            <label className="form-label" htmlFor="title">
+              Rating
+            </label>
             <input
               {...register("rating")}
-              placeholder="Rating"
               type="number"
               id="rating"
               className="form-control form-control"
@@ -137,7 +145,30 @@ const UserCreateBook = ({ show, setShow }) => {
             </select>
           </div>
 
-          <button className="btn btn-primary mt-4" type="submit">
+          <div className="form-group">
+            <label className="form-label text-muted" htmlFor="category">
+              Select tags
+            </label>
+            <select
+              multiple={tags}
+              className="form-control"
+              id="category"
+              {...register("tags")}
+            >
+              {tags &&
+                tags.map((tag) => (
+                  <option key={tag.id} value={tag.id}>
+                    {tag.name}
+                  </option>
+                ))}
+            </select>
+          </div>
+
+          <button
+            className="btn btn-primary mt-4"
+            type="submit"
+            disabled={isLoading}
+          >
             Save
           </button>
         </form>
@@ -146,4 +177,4 @@ const UserCreateBook = ({ show, setShow }) => {
   );
 };
 
-export default UserCreateBook;
+export default memo(UserCreateBook);

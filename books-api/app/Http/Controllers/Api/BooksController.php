@@ -9,6 +9,7 @@ use App\Http\Resources\Book\SingleBookResource;
 use App\Models\Book;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Intervention\Image\ImageManagerStatic as Image;
 
 
 class BooksController extends Controller
@@ -48,9 +49,26 @@ class BooksController extends Controller
             'category_id' => 'required',
         ]);
 
-        return new BookResource(
-            Book::query()->create($request->all())
-        );
+        $data = [
+            'title' => $request->title,
+            'description' => $request->description,
+            'pages' => $request->pages,
+            'rating' => $request->rating,
+            'user_id' => $request->user_id,
+            'category_id' => $request->category_id,
+        ];
+
+        if($request->hasFile("image")) {
+            $img = $request->image;
+            $img_name = time().$img->getClientOriginalName();
+            Image::make($img)->save(storage_path("app/public/images/".$img_name));
+            $data['image'] = $img_name;
+        }
+
+        $book = Book::query()->create($data);
+        $book->tags()->sync($request->tags);
+
+        return new BookResource($book);
     }
 
     public function update(Request $request, $id)
@@ -60,17 +78,23 @@ class BooksController extends Controller
             'description' => 'required',
             'pages' => 'required|min:1|max:3000',
             'rating' => 'required|min:0|max:5',
-            'user_id' => 'required',
             'category_id' => 'required',
         ]);
 
-        $book = Book::query()->find($id)->update($request->all());
-        return new BookResource($book);
+        $book = Book::find($id);
+        $book->update($request->all());
+        $book->tags()->sync($request->tags);
+
+        return new BookResource(
+            $book
+        );
     }
 
     public function destroy($id)
     {
-        Book::query()->find($id)->delete();
+        $book = Book::query()->find($id);
+        $book->delete();
+        $book->tags()->sync([]);
         return response(null, Response::HTTP_NO_CONTENT);
     }
 

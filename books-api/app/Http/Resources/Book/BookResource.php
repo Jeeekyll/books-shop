@@ -3,6 +3,7 @@
 namespace App\Http\Resources\Book;
 
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Facades\Storage;
 
 class BookResource extends JsonResource
 {
@@ -24,7 +25,10 @@ class BookResource extends JsonResource
             'pages' => $this->pages,
             'rating' => $this->rating,
             'slug' => $this->slug,
+            'image' => $this->image,
+            'category_id' => $this->category_id,
             'created_at' => $this->created_at,
+            'tags' => $this->tags,
         ];
     }
 
