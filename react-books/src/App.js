@@ -1,18 +1,22 @@
 import React from "react";
-import Header from "./components/Header";
 import { BrowserRouter } from "react-router-dom";
 import Routes from "./router/Routes";
 import CurrentUserChecker from "./components/CurrentUserChecker";
 import RootContainer from "./components/RootContainer";
+import { Layout } from "antd";
+import "./App.css";
+import Header from "./components/Header";
 
 const App = () => {
   return (
     <CurrentUserChecker>
       <BrowserRouter>
-        <Header />
-        <RootContainer>
-          <Routes />
-        </RootContainer>
+        <Layout>
+          <Header />
+          <RootContainer>
+            <Routes />
+          </RootContainer>
+        </Layout>
       </BrowserRouter>
     </CurrentUserChecker>
   );

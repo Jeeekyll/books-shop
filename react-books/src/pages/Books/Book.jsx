@@ -1,20 +1,35 @@
 import React, { memo } from "react";
 import { Link } from "react-router-dom";
+import { Avatar, Card, Col, Rate } from "antd";
+import Title from "antd/lib/typography/Title";
+import Paragraph from "antd/lib/typography/Paragraph";
 
-const Book = ({ title, description, slug, pages, rating, image }) => {
+const Book = ({ id, title, slug, pages, rating, image, description }) => {
   return (
-    <article>
-      <div>
-        <h5>{title}</h5>
-        <p>{description.slice(0, 200) + "..."}</p>
-        {image && <img src={image} alt="image" className="img-circle" />}
+    <Col span={8} key={id}>
+      <Card
+        bordered={true}
+        hoverable
+        bodyStyle={{ maxHeight: "100%" }}
+        actions={[<Link to={"/books/" + slug}>Read more</Link>]}
+      >
+        <Avatar src={image} size={120} />
+        <Title level={4}>{title}</Title>
+        <Paragraph
+          ellipsis={{
+            rows: 2,
+            expandable: true,
+            symbol: "more",
+          }}
+        >
+          {description}
+        </Paragraph>
+        <div>{pages} pages</div>
         <div>
-          Pages: {pages} | rating: {rating}{" "}
+          <Rate disabled defaultValue={rating} />
         </div>
-        <Link to={"/books/" + slug}>Read more</Link>
-      </div>
-      <hr />
-    </article>
+      </Card>
+    </Col>
   );
 };
 

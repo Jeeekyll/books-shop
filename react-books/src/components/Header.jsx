@@ -2,6 +2,8 @@ import React, { memo } from "react";
 import { Link, NavLink } from "react-router-dom";
 import { shallowEqual, useSelector } from "react-redux";
 import Logout from "../pages/Auth/Logout";
+import { Header as LayoutHeader } from "antd/lib/layout/layout";
+import Menu from "antd/lib/menu";
 
 const Header = () => {
   const { email, isLoggedIn } = useSelector(
@@ -13,48 +15,41 @@ const Header = () => {
   );
 
   return (
-    <>
-      <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
-        <div className="container">
-          <Link className="navbar-brand" to="/">
-            Books shop
-          </Link>
-          <ul className="navbar-nav ml-auto">
-            <li className="nav-item">
-              <NavLink className="nav-link" to="/" exact>
-                Home
-              </NavLink>
-            </li>
+    <LayoutHeader>
+      <Menu theme="dark" mode="horizontal" defaultSelectedKeys="1">
+        <Menu.Item>
+          <Menu.Item key="0">
+            <Link to="/">Books shop</Link>
+          </Menu.Item>
+        </Menu.Item>
 
-            {isLoggedIn ? (
-              <>
-                <li className="nav-item">
-                  <Link to={"/user"} className="nav-link">
-                    {email}
-                  </Link>
-                </li>
-                <li className="nav-item">
-                  <Logout />
-                </li>
-              </>
-            ) : (
-              <>
-                <li className="nav-item">
-                  <NavLink className="nav-link" to="/register">
-                    Register
-                  </NavLink>
-                </li>
-                <li className="nav-item">
-                  <NavLink className="nav-link" to="/login">
-                    Login
-                  </NavLink>
-                </li>
-              </>
-            )}
-          </ul>
-        </div>
-      </nav>
-    </>
+        <Menu.Item key="1" style={{ marginLeft: "auto" }}>
+          <NavLink to="/" exact>
+            Home
+          </NavLink>
+        </Menu.Item>
+
+        {isLoggedIn ? (
+          <>
+            <Menu.Item key="2">
+              <Link to="/user">{email}</Link>
+            </Menu.Item>
+            <Menu.Item key="3" danger={true}>
+              <Logout />
+            </Menu.Item>
+          </>
+        ) : (
+          <>
+            <Menu.Item key="2">
+              <NavLink to="/register">Register</NavLink>
+            </Menu.Item>
+            <Menu.Item key="3">
+              <NavLink to="/login">Login</NavLink>
+            </Menu.Item>
+          </>
+        )}
+      </Menu>
+    </LayoutHeader>
   );
 };
 

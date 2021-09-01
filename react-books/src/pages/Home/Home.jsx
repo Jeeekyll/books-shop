@@ -1,34 +1,30 @@
-import React, { memo, useEffect, useState } from "react";
+import React, { memo, useEffect } from "react";
 import { shallowEqual, useDispatch, useSelector } from "react-redux";
-import { getPagesArray } from "../../utils/pages";
 import Book from "../Books/Book";
-import classNames from "classnames";
-import BooksPreloader from "../../components/preloaders/BooksPreloader";
-import Sidebar from "../../components/Sidebar";
 import { fetchBooks, setSortingParam } from "../../store/booksSlice";
-import "./Home.css";
+import { Col, Pagination, Row } from "antd";
+import Select from "antd/lib/select";
+import Title from "antd/lib/typography/Title";
+import Spin from "antd/lib/spin";
 
 const Home = () => {
   const dispatch = useDispatch();
 
   const {
     books,
-    isBooksLoading,
+    isLoading,
     currentPage,
-    totalPagesCount,
-    categories,
-    isCategoriesLoading,
     sortingParam,
+    booksPerPageCount,
+    booksCount,
   } = useSelector(
     ({ books, categories }) => ({
       books: books.books,
       currentPage: books.pagination?.page,
-      totalPagesCount: books.pagination?.totalPagesCount,
-      isBooksLoading: books.isLoading,
+      booksPerPageCount: books.pagination?.booksPerPageCount,
+      booksCount: books.pagination?.booksCount,
+      isLoading: books.isLoading,
       sortingParam: books.sortingParam,
-
-      categories: categories.categories,
-      isCategoriesLoading: categories.isLoading,
     }),
     shallowEqual
   );
@@ -42,94 +38,76 @@ const Home = () => {
     { id: "-title", text: "Title (desc)" },
   ];
 
-  //init pagination buttons
-  const [pagesCount, setPagesCount] = useState(totalPagesCount);
-  const pagesArray = getPagesArray(pagesCount);
-
   useEffect(() => {
     if (!books.length) {
       dispatch(fetchBooks({ currentPage, sortingParam }));
     }
-    setPagesCount(totalPagesCount);
-  }, [totalPagesCount]);
+  }, [booksCount]);
 
-  const handleBooksSort = (e) => {
-    const sortingOption = e.target.value;
-    dispatch(setSortingParam(sortingOption));
+  const handleBooksSort = (value) => {
+    dispatch(setSortingParam(value));
     dispatch(
       fetchBooks({
         currentPage,
-        sortingParam: sortingOption,
+        sortingParam: value,
       })
     );
   };
 
   return (
-    <main className="main pt-4 pb-4">
-      <div className="container">
-        <h3 className="text-center mt-2">Our books</h3>
-        <div className="row">
-          <Sidebar categories={categories} isFetching={isCategoriesLoading} />
+    <Row gutter={[0, 20]}>
+      <Col span={24}>
+        <Row justify="center">
+          <Col>
+            <Title level={2}>Our books</Title>
+          </Col>
+        </Row>
+      </Col>
 
-          <div className="books col-9 ml-auto">
-            <div className="col-3 ml-auto">
-              <select
-                id="inputState"
-                className="form-control"
-                onChange={handleBooksSort}
-              >
-                {sortingItems &&
-                  sortingItems.map((item) => (
-                    <option
-                      defaultValue={item.id === sortingParam}
-                      className={classNames({
-                        active: item.id === sortingParam,
-                      })}
-                      value={item.id}
-                      key={item.id}
-                    >
-                      {item.text}
-                    </option>
-                  ))}
-              </select>
-            </div>
+      <Col span={24}>
+        <Row justify="end">
+          <Col>
+            <Select
+              onChange={handleBooksSort}
+              defaultValue={"Sort by: "}
+              style={{ minWidth: "140px" }}
+            >
+              {sortingItems &&
+                sortingItems.map((item) => (
+                  <Select.Option value={item.id} key={item.id}>
+                    {item.text}
+                  </Select.Option>
+                ))}
+            </Select>
+          </Col>
+        </Row>
+      </Col>
 
-            {isBooksLoading ? (
-              Array(3)
-                .fill(0)
-                .map((loader, index) => <BooksPreloader key={index} />)
-            ) : (
-              <>
-                {!!Object.keys(books).length &&
-                  books.map((book) => <Book key={book.id} {...book} />)}
+      <Col span={24}>
+        {isLoading ? (
+          <Spin size="large" />
+        ) : (
+          <Row gutter={[40, 40]}>
+            {!!Object.keys(books).length &&
+              books.map((book) => <Book key={book.id} {...book} />)}
+          </Row>
+        )}
+      </Col>
 
-                <ul className="pagination pagination">
-                  {pagesArray &&
-                    pagesArray.map((page, index) => (
-                      <li
-                        className={classNames({
-                          "page-item": true,
-                          active: currentPage === page,
-                        })}
-                        key={index}
-                      >
-                        <button
-                          className="page-link"
-                          onClick={() =>
-                            dispatch(fetchBooks({ page, sortingParam }))
-                          }
-                        >
-                          {page}
-                        </button>
-                      </li>
-                    ))}
-                </ul>
-              </>
-            )}
-          </div>
-        </div>
-      </div>
-    </main>
+      <Col span={24}>
+        {!isLoading && (
+          <Pagination
+            defaultCurrent={1}
+            total={booksCount}
+            pageSize={booksPerPageCount}
+            current={currentPage}
+            onChange={(page) => {
+              dispatch(fetchBooks({ page, sortingParam }));
+            }}
+          />
+        )}
+      </Col>
+    </Row>
   );
 };
 

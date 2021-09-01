@@ -14,7 +14,6 @@ class CategoriesController extends Controller
         $categories = Category::query()
             ->withCount('books')
             ->orderBy('books_count', 'desc')
-            ->take(5)
             ->get();
         return response()->json(['data' => $categories]);
     }

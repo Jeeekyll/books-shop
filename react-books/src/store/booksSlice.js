@@ -32,6 +32,8 @@ export const fetchBooks = createAsyncThunk(
         setBooks({
           books: response.data,
           pagination: {
+            booksPerPageCount: response.meta?.per_page,
+            booksCount: response.meta?.total,
             totalPagesCount: response.meta?.last_page,
             page: response.meta?.current_page,
           },
@@ -121,7 +123,12 @@ const booksSlice = createSlice({
     books: [],
     error: null,
     isLoading: false,
-    pagination: {},
+    pagination: {
+      booksPerPageCount: 0,
+      booksCount: 0,
+      totalPagesCount: 0,
+      page: 0,
+    },
     sortingParam: "date",
 
     currentBook: {
