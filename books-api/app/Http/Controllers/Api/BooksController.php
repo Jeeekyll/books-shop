@@ -9,6 +9,7 @@ use App\Http\Resources\Book\SingleBookResource;
 use App\Models\Book;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Storage;
 use Intervention\Image\ImageManagerStatic as Image;
 
 
@@ -46,28 +47,20 @@ class BooksController extends Controller
             'pages' => 'required|min:1|max:3000',
             'rating' => 'required|min:0|max:5',
             'user_id' => 'required',
+            'image' => 'required|image:jpeg,png,jpg,gif,svg|max:2048',
             'category_id' => 'required',
         ]);
+        $data = $request->all();
 
-        $data = [
-            'title' => $request->title,
-            'description' => $request->description,
-            'pages' => $request->pages,
-            'rating' => $request->rating,
-            'user_id' => $request->user_id,
-            'category_id' => $request->category_id,
-        ];
-
-        if($request->hasFile("image")) {
-            $img = $request->image;
-            $img_name = time().$img->getClientOriginalName();
-            Image::make($img)->save(storage_path("app/public/images/".$img_name));
-            $data['image'] = $img_name;
+        if ($request->hasFile('image')) {
+            $uploadFolder = 'images';
+            $image = $request->file('image');
+            $image_uploaded_path = $image->store($uploadFolder, 'public');
+            $data['image'] = Storage::disk('public')->url($image_uploaded_path);
         }
 
         $book = Book::query()->create($data);
         $book->tags()->sync($request->tags);
-
         return new BookResource($book);
     }
 
@@ -78,11 +71,20 @@ class BooksController extends Controller
             'description' => 'required',
             'pages' => 'required|min:1|max:3000',
             'rating' => 'required|min:0|max:5',
+            'image' => 'required|image:jpeg,png,jpg,gif,svg|max:2048',
             'category_id' => 'required',
         ]);
+        $data = $request->all();
+
+        if ($request->hasFile('image')) {
+            $uploadFolder = 'images';
+            $image = $request->file('image');
+            $image_uploaded_path = $image->store($uploadFolder, 'public');
+            $data['image'] = Storage::disk('public')->url($image_uploaded_path);
+        }
 
         $book = Book::find($id);
-        $book->update($request->all());
+        $book->update($data);
         $book->tags()->sync($request->tags);
 
         return new BookResource(

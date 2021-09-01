@@ -5,7 +5,6 @@ use App\Http\Controllers\Api\CategoriesController;
 use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\TagsController;
 use App\Http\Controllers\AuthController;
-use App\Http\Controllers\Api\FileController;
 
 use Illuminate\Support\Facades\Route;
 
@@ -34,8 +33,6 @@ Route::get('categories', [CategoriesController::class, 'index']);
 Route::get('categories/{slug}', [CategoriesController::class, 'show']);
 //tags routes
 Route::get('tags', [TagsController::class, 'index']);
-//file upload routes
-Route::post('books', [BooksController::class, 'store']);
 
 //Protected routes
 Route::group(['middleware' => ['auth:sanctum']], function () {
@@ -45,7 +42,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     //user routes
     Route::get('user', [UserController::class, 'index']);
     //books routes
-   // Route::post('books', [BooksController::class, 'store']);
-    Route::put('books/{id}', [BooksController::class, 'update']);
+    Route::post('books', [BooksController::class, 'store']);
+    Route::post('books/{id}', [BooksController::class, 'update']);
     Route::delete('books/{id}', [BooksController::class, 'destroy']);
 });

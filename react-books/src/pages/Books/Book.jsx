@@ -7,7 +7,7 @@ const Book = ({ title, description, slug, pages, rating, image }) => {
       <div>
         <h5>{title}</h5>
         <p>{description.slice(0, 200) + "..."}</p>
-        {image && <img src={image} alt="image" className="img-fluid" />}
+        {image && <img src={image} alt="image" className="img-circle" />}
         <div>
           Pages: {pages} | rating: {rating}{" "}
         </div>

@@ -21,15 +21,11 @@ export const booksAPI = {
 
   createBook: async (data, token) => {
     await getCsrfToken();
-    const response = await axiosInstance.post(
-      endpoint,
-      { ...data },
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
+    const response = await axiosInstance.post(endpoint, data, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
     return response.data;
   },
 
@@ -45,15 +41,11 @@ export const booksAPI = {
 
   updateBook: async (id, data, token) => {
     await getCsrfToken();
-    const response = await axiosInstance.put(
-      `${endpoint}/${id}`,
-      { ...data },
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
+    const response = await axiosInstance.post(`${endpoint}/${id}`, data, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
     return response.data;
   },
 };

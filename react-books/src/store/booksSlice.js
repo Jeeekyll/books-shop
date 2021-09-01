@@ -6,6 +6,22 @@ import {
   updateUserBook,
 } from "./authUserSlice";
 
+const bookToFormData = (data) => {
+  let formData = new FormData();
+  formData.append("title", data.title);
+  formData.append("user_id", data.user_id);
+  formData.append("description", data.description);
+  formData.append("pages", data.pages);
+  formData.append("rating", data.rating);
+  data.tags.forEach((item) => {
+    data.append(`tags[]`, JSON.stringify(item));
+  });
+
+  formData.append("category_id", data.category_id);
+  formData.append("image", data.image[0]);
+  return formData;
+};
+
 export const fetchBooks = createAsyncThunk(
   "books/fetchBooks",
   async (params, { dispatch, rejectWithValue }) => {
@@ -44,7 +60,8 @@ export const fetchCreateBook = createAsyncThunk(
   async (data, { dispatch, rejectWithValue }) => {
     const token = localStorage.getItem("token");
     try {
-      const response = await booksAPI.createBook(data, token);
+      const formData = bookToFormData(data);
+      const response = await booksAPI.createBook(formData, token);
       dispatch(createBook(response.data));
       dispatch(createUserBook(response.data));
     } catch (error) {
@@ -73,7 +90,9 @@ export const fetchUpdateBook = createAsyncThunk(
     const token = localStorage.getItem("token");
     const { id, data } = params;
     try {
-      const response = await booksAPI.updateBook(id, data, token);
+      let formData = bookToFormData(data);
+      formData.delete("user_id");
+      const response = await booksAPI.updateBook(id, formData, token);
       dispatch(updateBook(response.data));
       dispatch(updateUserBook(response.data));
     } catch (error) {

@@ -88,8 +88,7 @@ const Home = () => {
                       value={item.id}
                       key={item.id}
                     >
-                      {" "}
-                      {item.text}{" "}
+                      {item.text}
                     </option>
                   ))}
               </select>

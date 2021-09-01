@@ -112,6 +112,18 @@ const UserCreateBook = ({ show, setShow, tags }) => {
 
           <div className="form-group">
             <label className="form-label" htmlFor="title">
+              Book thumbnail
+            </label>
+            <input
+              {...register("image")}
+              type="file"
+              className="form-control-file"
+              id="image"
+            />
+          </div>
+
+          <div className="form-group">
+            <label className="form-label" htmlFor="title">
               Rating
             </label>
             <input
