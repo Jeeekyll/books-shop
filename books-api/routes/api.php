@@ -43,6 +43,6 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::get('user', [UserController::class, 'index']);
     //books routes
     Route::post('books', [BooksController::class, 'store']);
-    Route::post('books/{id}', [BooksController::class, 'update']);
+    Route::put('books/{id}', [BooksController::class, 'update']);
     Route::delete('books/{id}', [BooksController::class, 'destroy']);
 });

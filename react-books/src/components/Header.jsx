@@ -17,10 +17,8 @@ const Header = () => {
   return (
     <LayoutHeader>
       <Menu theme="dark" mode="horizontal" defaultSelectedKeys="1">
-        <Menu.Item>
-          <Menu.Item key="0">
-            <Link to="/">Books shop</Link>
-          </Menu.Item>
+        <Menu.Item key="0">
+          <Link to="/">Books shop</Link>
         </Menu.Item>
 
         <Menu.Item key="1" style={{ marginLeft: "auto" }}>

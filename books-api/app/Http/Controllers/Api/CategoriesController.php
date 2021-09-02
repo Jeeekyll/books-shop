@@ -22,14 +22,11 @@ class CategoriesController extends Controller
     {
         $category = Category::query()->firstWhere('slug', $slug);
         $books = Book::query()->where(
-            'category_id', $category->id)->paginate(4);
+            'category_id', $category->id)->paginate(6);
 
         return response([
             'category' => $category,
             'books' => $books
         ]);
-//        return new CategoryResource(
-//            Category::query()->firstWhere('slug', $slug)
-//        );
     }
 }

@@ -1,9 +1,9 @@
-import {createAsyncThunk, createSlice} from "@reduxjs/toolkit";
-import {categoriesAPI} from "../api/categories";
+import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { categoriesAPI } from "../api/categories";
 
 export const fetchCategories = createAsyncThunk(
-  'categories/fetchCategories',
-  async (_, {dispatch, rejectWithValue}) => {
+  "categories/fetchCategories",
+  async (_, { dispatch, rejectWithValue }) => {
     try {
       const response = await categoriesAPI.getCategories();
       dispatch(setCategories(response.data));
@@ -14,21 +14,24 @@ export const fetchCategories = createAsyncThunk(
 );
 
 export const fetchCategory = createAsyncThunk(
-  'categories/fetchCategory',
-  async (params, {dispatch, rejectWithValue}) => {
-    const {slug, page} = params;
-    if (!slug) throw new Error('Invalid slug');
+  "categories/fetchCategory",
+  async (params, { dispatch, rejectWithValue }) => {
+    const { slug, page } = params;
+    if (!slug) throw new Error("Invalid slug");
 
     try {
       const response = await categoriesAPI.getCategory(slug, page);
-      dispatch(setCategory({
-        books: response.books.data,
-        pagination: {
-          totalPagesCount: response.books.last_page,
-          page: response.books.current_page,
-        },
-        ...response.category,
-      }));
+      dispatch(
+        setCategory({
+          books: response.books.data,
+          pagination: {
+            booksPerPageCount: response.books.per_page,
+            booksCount: response.books.total,
+            page: response.books.current_page,
+          },
+          ...response.category,
+        })
+      );
     } catch (error) {
       return rejectWithValue(error.message);
     }
@@ -36,17 +39,17 @@ export const fetchCategory = createAsyncThunk(
 );
 
 //helper actions
-const setIsLoading = (state, action) => {
+const setIsLoading = (state) => {
   state.isLoading = true;
-  state.error = '';
-}
+  state.error = "";
+};
 const setError = (state, action) => {
   state.isLoading = false;
   state.error = action.payload;
-}
+};
 
 const categoriesSlice = createSlice({
-  name: 'categories',
+  name: "categories",
 
   initialState: {
     isLoading: false,
@@ -55,7 +58,11 @@ const categoriesSlice = createSlice({
     currentCategory: {
       isLoading: false,
       error: null,
-      pagination: {},
+      pagination: {
+        booksPerPageCount: null,
+        booksCount: null,
+        page: null,
+      },
     },
   },
 
@@ -66,7 +73,7 @@ const categoriesSlice = createSlice({
     setCategory(state, action) {
       state.currentCategory = action.payload;
       state.currentCategory.pagination = action.payload.pagination;
-    }
+    },
   },
 
   extraReducers: {
@@ -86,8 +93,8 @@ const categoriesSlice = createSlice({
       state.currentCategory.isLoading = false;
       state.currentCategory.error = action.payload;
     },
-  }
+  },
 });
 
-const {setCategories, setCategory} = categoriesSlice.actions;
+const { setCategories, setCategory } = categoriesSlice.actions;
 export default categoriesSlice.reducer;

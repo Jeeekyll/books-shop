@@ -6,21 +6,21 @@ import {
   updateUserBook,
 } from "./authUserSlice";
 
-const bookToFormData = (data) => {
-  let formData = new FormData();
-  formData.append("title", data.title);
-  formData.append("user_id", data.user_id);
-  formData.append("description", data.description);
-  formData.append("pages", data.pages);
-  formData.append("rating", data.rating);
-  data.tags.forEach((item) => {
-    data.append(`tags[]`, JSON.stringify(item));
-  });
-
-  formData.append("category_id", data.category_id);
-  formData.append("image", data.image[0]);
-  return formData;
-};
+// const bookToFormData = (data) => {
+//   let formData = new FormData();
+//   formData.append("title", data.title);
+//   formData.append("user_id", data.user_id);
+//   formData.append("description", data.description);
+//   formData.append("pages", data.pages);
+//   formData.append("rating", data.rating);
+//   data.tags.forEach((item) => {
+//     data.append(`tags[]`, JSON.stringify(item));
+//   });
+//
+//   formData.append("category_id", data.category_id);
+//   formData.append("image", data.image[0]);
+//   return formData;
+// };
 
 export const fetchBooks = createAsyncThunk(
   "books/fetchBooks",
@@ -34,7 +34,6 @@ export const fetchBooks = createAsyncThunk(
           pagination: {
             booksPerPageCount: response.meta?.per_page,
             booksCount: response.meta?.total,
-            totalPagesCount: response.meta?.last_page,
             page: response.meta?.current_page,
           },
         })
@@ -62,8 +61,7 @@ export const fetchCreateBook = createAsyncThunk(
   async (data, { dispatch, rejectWithValue }) => {
     const token = localStorage.getItem("token");
     try {
-      const formData = bookToFormData(data);
-      const response = await booksAPI.createBook(formData, token);
+      const response = await booksAPI.createBook(data, token);
       dispatch(createBook(response.data));
       dispatch(createUserBook(response.data));
     } catch (error) {
@@ -92,9 +90,7 @@ export const fetchUpdateBook = createAsyncThunk(
     const token = localStorage.getItem("token");
     const { id, data } = params;
     try {
-      let formData = bookToFormData(data);
-      formData.delete("user_id");
-      const response = await booksAPI.updateBook(id, formData, token);
+      const response = await booksAPI.updateBook(id, data, token);
       dispatch(updateBook(response.data));
       dispatch(updateUserBook(response.data));
     } catch (error) {
@@ -106,14 +102,17 @@ export const fetchUpdateBook = createAsyncThunk(
 //helper actions
 const setIsLoading = (state, action) => {
   state.isLoading = true;
+  state.isSuccess = false;
   state.error = "";
 };
 const setError = (state, action) => {
   state.isLoading = false;
+  state.isSuccess = false;
   state.error = action.payload;
 };
 const setIsSuccess = (state) => {
   state.isLoading = false;
+  state.isSuccess = true;
 };
 
 const booksSlice = createSlice({
@@ -123,14 +122,13 @@ const booksSlice = createSlice({
     books: [],
     error: null,
     isLoading: false,
+    isSuccess: false,
     pagination: {
-      booksPerPageCount: 0,
-      booksCount: 0,
-      totalPagesCount: 0,
-      page: 0,
+      booksPerPageCount: null,
+      booksCount: null,
+      page: null,
     },
     sortingParam: "date",
-
     currentBook: {
       error: null,
       isLoading: false,

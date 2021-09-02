@@ -1,0 +1,16 @@
+.ant-list-item-action {
+  margin-top: 0 !important;
+  margin-left: 40px !important;
+}
+.ant-list-item-meta {
+  margin-bottom: 0 !important;
+}
+.ant-input-number {
+  width: 100% !important;
+}
+.ant-form-item {
+  margin-bottom: 10px !important;
+}
+label {
+  margin-bottom: 0 !important;
+}

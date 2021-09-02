@@ -7,14 +7,19 @@ import SubMenu from "antd/lib/menu/SubMenu";
 import { Content, Footer } from "antd/lib/layout/layout";
 import { PieChartOutlined } from "@ant-design/icons";
 import { Link } from "react-router-dom";
+import { fetchTags } from "../store/tagsSlice";
 
 const RootContainer = ({ children }) => {
   const dispatch = useDispatch();
   const categories = useSelector((state) => state.categories.categories);
+  const tags = useSelector((state) => state.tags.tags);
 
   useEffect(() => {
     if (!categories.length) {
       dispatch(fetchCategories());
+    }
+    if (!tags.length) {
+      dispatch(fetchTags());
     }
   }, []);
 
@@ -46,7 +51,9 @@ const RootContainer = ({ children }) => {
         <Content>
           <div className="container">{children}</div>
         </Content>
-        <Footer style={{ textAlign: "center" }}>Cool Footer ©2021</Footer>
+        <Footer style={{ textAlign: "center" }} theme={"dark"}>
+          Cool Footer ©2021
+        </Footer>
       </Layout>
     </Layout>
   );

@@ -10,24 +10,17 @@ import Spin from "antd/lib/spin";
 const Home = () => {
   const dispatch = useDispatch();
 
-  const {
-    books,
-    isLoading,
-    currentPage,
-    sortingParam,
-    booksPerPageCount,
-    booksCount,
-  } = useSelector(
+  const { books, isLoading, sortingParam, booksPagination } = useSelector(
     ({ books, categories }) => ({
       books: books.books,
-      currentPage: books.pagination?.page,
-      booksPerPageCount: books.pagination?.booksPerPageCount,
-      booksCount: books.pagination?.booksCount,
+      booksPagination: books.pagination,
       isLoading: books.isLoading,
       sortingParam: books.sortingParam,
     }),
     shallowEqual
   );
+
+  const { page, booksPerPageCount, booksCount } = booksPagination;
 
   const sortingItems = [
     { id: "pages", text: "Pages (asc)" },
@@ -40,7 +33,7 @@ const Home = () => {
 
   useEffect(() => {
     if (!books.length) {
-      dispatch(fetchBooks({ currentPage, sortingParam }));
+      dispatch(fetchBooks({ page, sortingParam }));
     }
   }, [booksCount]);
 
@@ -48,7 +41,7 @@ const Home = () => {
     dispatch(setSortingParam(value));
     dispatch(
       fetchBooks({
-        currentPage,
+        page,
         sortingParam: value,
       })
     );
@@ -87,7 +80,7 @@ const Home = () => {
         {isLoading ? (
           <Spin size="large" />
         ) : (
-          <Row gutter={[40, 40]}>
+          <Row gutter={[24, 24]}>
             {!!Object.keys(books).length &&
               books.map((book) => <Book key={book.id} {...book} />)}
           </Row>
@@ -100,7 +93,7 @@ const Home = () => {
             defaultCurrent={1}
             total={booksCount}
             pageSize={booksPerPageCount}
-            current={currentPage}
+            current={page}
             onChange={(page) => {
               dispatch(fetchBooks({ page, sortingParam }));
             }}

@@ -106,19 +106,6 @@ const UserUpdateBook = ({
           </div>
 
           <div className="form-group">
-            <label className="form-label" htmlFor="title">
-              Book thumbnail
-            </label>
-            <input
-              {...register("image")}
-              type="file"
-              defaultValue={image}
-              className="form-control-file"
-              id="image"
-            />
-          </div>
-
-          <div className="form-group">
             <label className="form-label" htmlFor="pages">
               Pages count
             </label>

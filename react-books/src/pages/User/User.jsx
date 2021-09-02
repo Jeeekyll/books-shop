@@ -1,82 +1,97 @@
 import React, { useEffect, useState } from "react";
 import { shallowEqual, useDispatch, useSelector } from "react-redux";
-import BooksPreloader from "../../components/preloaders/BooksPreloader";
 import { fetchAuthUser } from "../../store/authUserSlice";
 import "bootstrap/dist/css/bootstrap.min.css";
 import UserCreateBook from "./UserBookForms/UserCreateBook";
 import UserBookSingle from "./UserBookSingle";
-import { fetchTags } from "../../store/tagsSlice";
+import { Button, Col, List, Row, Space, Spin } from "antd";
+import Title from "antd/lib/typography/Title";
+import "./User.css";
+import PlusOutlined from "@ant-design/icons/lib/icons/PlusOutlined";
 
 const User = () => {
   const dispatch = useDispatch();
 
-  const { user, isLoading, tags } = useSelector(
+  const { user, isLoading } = useSelector(
     ({ authUser, tags }) => ({
       user: authUser.user,
       isLoading: authUser.isLoading,
       error: authUser.error,
-      tags: tags.tags,
     }),
     shallowEqual
   );
 
   const { nickname, email, created_at, books } = user;
-
-  //modal toggle
   const [showCreateModal, setShowCreateModal] = useState(false);
 
   useEffect(() => {
     dispatch(fetchAuthUser());
-    if (!tags.length) {
-      dispatch(fetchTags());
-    }
   }, []);
 
   return (
     <section className="user">
-      <div className="container pt-4">
-        <div className="row">
-          <div className="col-8 m-auto">
-            {isLoading ? (
-              <BooksPreloader />
-            ) : (
-              <>
-                <h3 className="text-center">{nickname} profile</h3>
-                <p className="lead mt-4">Your personal data:</p>
-                <div>Nickname: {nickname}</div>
-                <div>Email: {email}</div>
-                <div>Registration date: {created_at}</div>
-
-                {books ? (
-                  <ul className="list-group mt-4">
-                    <div className="d-flex justify-content-between p-3">
-                      <h5>Your books: </h5>
-                      <button
-                        onClick={() => setShowCreateModal(true)}
-                        className="btn btn-success btn-sm mr-2 flex-grow-0 col-1"
-                      >
-                        Add
-                      </button>
-                    </div>
-
-                    {books.map((book) => (
-                      <UserBookSingle key={book.id} {...book} />
-                    ))}
-                  </ul>
-                ) : (
-                  <p>You dont have any books</p>
-                )}
-              </>
-            )}
-          </div>
-        </div>
-      </div>
-
       <UserCreateBook
-        show={showCreateModal}
-        setShow={setShowCreateModal}
-        tags={tags}
+        visible={showCreateModal}
+        setVisible={setShowCreateModal}
       />
+
+      {isLoading ? (
+        <Row justify="center">
+          <Spin size="large" />
+        </Row>
+      ) : (
+        <>
+          <Row justify="center">
+            <Col>
+              <Title level={3}>{nickname} profile</Title>
+            </Col>
+          </Row>
+          <Row>
+            <Col span={12} offset={6}>
+              <Space direction="vertical">
+                <h5>Your personal data:</h5>
+                <div>Username: {nickname}</div>
+                <div>Email: {email}</div>
+                <div>Registration: {created_at}</div>
+              </Space>
+            </Col>
+          </Row>
+          <Row justify="center">
+            <Col>
+              <h5>Your books</h5>
+            </Col>
+          </Row>
+          <Row>
+            <Col offset={5}>
+              <Button
+                type="primary"
+                icon={<PlusOutlined />}
+                onClick={() => {
+                  setShowCreateModal(true);
+                }}
+              >
+                New book
+              </Button>
+            </Col>
+          </Row>
+
+          <Row style={{ marginTop: "1rem" }}>
+            <Col span={16} offset={4}>
+              <List
+                itemLayout="vertical"
+                size="large"
+                pagination={{
+                  pageSize: 3,
+                }}
+                dataSource={books}
+                renderItem={(book) => (
+                  <UserBookSingle key={book.id} {...book} />
+                )}
+              />
+            </Col>
+          </Row>
+        </>
+      )}
     </section>
   );
 };
