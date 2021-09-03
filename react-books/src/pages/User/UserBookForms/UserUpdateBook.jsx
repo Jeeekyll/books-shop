@@ -1,34 +1,23 @@
-import React, { memo } from "react";
-import Modal from "react-bootstrap/Modal";
-import { useForm } from "react-hook-form";
+import React, { memo, useCallback, useEffect } from "react";
+import { Controller, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-import * as yup from "yup";
-import BackendErrors from "../../../components/BackendErrors";
 import { shallowEqual, useDispatch, useSelector } from "react-redux";
 import { fetchUpdateBook } from "../../../store/booksSlice";
-
-const updateBookSchema = yup.object().shape({
-  title: yup
-    .string("Enter book title")
-    .required("Title is required")
-    .max(250, "Enter shorter title")
-    .min(3, "Title should be of minimum 3 characters length"),
-  description: yup
-    .string("Enter book description")
-    .required("Description is required")
-    .min(3, "Description should be of minimum 3 characters length"),
-  pages: yup
-    .number()
-    .typeError("Pages count is required")
-    .integer()
-    .positive()
-    .lessThan(3000),
-  rating: yup.number().typeError("Rating is required").min(0).max(5),
-});
+import {
+  Button,
+  Col,
+  Drawer,
+  Form,
+  Input,
+  InputNumber,
+  Rate,
+  Row,
+  Select,
+  Space,
+} from "antd";
+import { updateBookSchema } from "./validation/userUpdateFormValidation";
 
 const UserUpdateBook = ({
-  show,
-  setShow,
   title,
   id,
   description,
@@ -36,22 +25,23 @@ const UserUpdateBook = ({
   pages,
   category_id,
   tags,
-  image,
+  visible,
+  setVisible,
 }) => {
   const dispatch = useDispatch();
-
-  const { categories, isLoading, allTags } = useSelector(
+  const { categories, isLoading, allTags, isSuccess } = useSelector(
     ({ categories, books, tags }) => ({
       categories: categories.categories,
       isLoading: books.isLoading,
       allTags: tags.tags,
+      isSuccess: books.isSuccess,
     }),
     shallowEqual
   );
 
   const {
-    register,
     handleSubmit,
+    control,
     formState: { errors },
   } = useForm({
     resolver: yupResolver(updateBookSchema),
@@ -61,134 +51,200 @@ const UserUpdateBook = ({
     dispatch(fetchUpdateBook({ id, data }));
   };
 
+  const onClose = useCallback(() => {
+    setVisible(false);
+  }, [setVisible]);
+
+  useEffect(() => {
+    onClose();
+  }, [isSuccess, onClose]);
+
   return (
-    <Modal show={show} onHide={() => setShow(false)}>
-      <Modal.Header closeButton>
-        <Modal.Title>Update book</Modal.Title>
-      </Modal.Header>
-      <Modal.Body>
-        <form onSubmit={handleSubmit(onSubmit)}>
-          {/*{error && <BackendErrors errors={error}/>}*/}
+    <Drawer
+      title="Update book"
+      width={720}
+      onClose={onClose}
+      visible={visible}
+      bodyStyle={{ paddingBottom: 80 }}
+      extra={
+        <Space>
+          <Button onClick={() => onClose()}>Cancel</Button>
+          <Button type="primary">Submit</Button>
+        </Space>
+      }
+    >
+      <form onSubmit={handleSubmit(onSubmit)}>
+        {/*{error && <BackendErrors errors={error}/>}*/}
 
-          <div className="form-group">
-            <label className="form-label" htmlFor="title">
-              Title
-            </label>
-            <input
-              {...register("title")}
-              type="text"
-              id="title"
-              defaultValue={title}
-              className="form-control form-control"
+        {/* TITLE */}
+        <Row gutter={16}>
+          <Col span={24}>
+            <Form.Item validateStatus={errors.title ? "error" : "success"}>
+              <label htmlFor="title">Title</label>
+              <Controller
+                id="title"
+                name="title"
+                control={control}
+                defaultValue={title}
+                rules={{ required: true }}
+                render={({ field }) => (
+                  <Input {...field} placeholder={"Enter title"} />
+                )}
+              />
+
+              {errors.title && (
+                <label className="text-danger" htmlFor="title">
+                  *{errors.title.message}
+                </label>
+              )}
+            </Form.Item>
+          </Col>
+        </Row>
+
+        {/* RATING & CATEGORIES */}
+        <Row gutter={16} justify="space-between">
+          <Col>
+            <Form.Item>
+              <label htmlFor="pages">Rating</label>
+              <Controller
+                id="rating"
+                name="rating"
+                control={control}
+                defaultValue={rating}
+                rules={{ required: true }}
+                render={({ field }) => (
+                  <div>
+                    <Rate {...field} />
+                  </div>
+                )}
+              />
+              {errors.rating && (
+                <label className="form-label text-danger" htmlFor="rating">
+                  *{errors.rating.message}
+                </label>
+              )}
+            </Form.Item>
+          </Col>
+          <Col span={12}>
+            <div>
+              <label htmlFor="category">Category</label>
+            </div>
+            <Controller
+              id="category_id"
+              name="category_id"
+              control={control}
+              defaultValue={category_id}
+              rules={{ required: true }}
+              render={({ field }) => (
+                <Select {...field} style={{ minWidth: "100%" }}>
+                  {categories &&
+                    categories.map((category) => (
+                      <Select.Option value={category.id} key={category.id}>
+                        {category.name}
+                      </Select.Option>
+                    ))}
+                </Select>
+              )}
             />
-            {errors.title && (
-              <label className="form-label text-danger" htmlFor="title">
-                *{errors.title.message}
-              </label>
-            )}
-          </div>
+          </Col>
+        </Row>
 
-          <div className="form-group">
-            <label className="form-label" htmlFor="description">
-              Description
-            </label>
-            <textarea
-              {...register("description")}
-              id="description"
-              className="form-control"
-              defaultValue={description}
-            ></textarea>
-            {errors.description && (
-              <label className="form-label text-danger" htmlFor="description">
-                *{errors.description.message}
-              </label>
-            )}
-          </div>
-
-          <div className="form-group">
-            <label className="form-label" htmlFor="pages">
-              Pages count
-            </label>
-            <input
-              {...register("pages")}
-              type="number"
+        {/* TAGS & PAGES */}
+        <Row gutter={16} style={{ marginTop: "20px" }} justify="space-between">
+          <Col span={12}>
+            <div>
+              <label htmlFor="tags">Select tags</label>
+            </div>
+            <Controller
+              id="tags"
+              name="tags"
+              control={control}
+              defaultValue={tags.map((t) => t.name)}
+              rules={{ required: true }}
+              render={({ field }) => (
+                <Select
+                  {...field}
+                  style={{ minWidth: "100%" }}
+                  mode="tags"
+                  placeholder="Select favourite tags"
+                >
+                  {tags &&
+                    allTags.map((tag) => (
+                      <Select.Option value={tag.id.toString()} key={tag.id}>
+                        {tag.name}
+                      </Select.Option>
+                    ))}
+                </Select>
+              )}
+            />
+          </Col>
+          <Col span={12}>
+            <label htmlFor="pages">Pages</label>
+            <Controller
               id="pages"
+              name="pages"
+              control={control}
               defaultValue={pages}
-              className="form-control form-control"
+              rules={{ required: true }}
+              render={({ field }) => (
+                <div>
+                  <InputNumber {...field} placeholder="Enter pages count" />
+                </div>
+              )}
             />
             {errors.pages && (
-              <label className="form-label text-danger" htmlFor="pages">
+              <label className="text-danger" htmlFor="title">
                 *{errors.pages.message}
               </label>
             )}
-          </div>
+          </Col>
+        </Row>
 
-          <div className="form-group">
-            <label className="form-label" htmlFor="title">
-              Rating
-            </label>
-            <input
-              {...register("rating")}
-              type="number"
-              id="rating"
-              defaultValue={rating}
-              className="form-control form-control"
-            />
-            {errors.rating && (
-              <label className="form-label text-danger" htmlFor="pages">
-                *{errors.rating.message}
-              </label>
-            )}
-          </div>
-
-          <div className="form-group">
-            <label className="form-label text-muted" htmlFor="category">
-              Category
-            </label>
-            <select
-              className="form-control"
-              id="category"
-              defaultValue={category_id}
-              {...register("category_id")}
+        {/* DESCRIPTION */}
+        <Row gutter={16} style={{ marginTop: "20px" }}>
+          <Col span={24}>
+            <Form.Item
+              validateStatus={errors.description ? "error" : "success"}
             >
-              {categories &&
-                categories.map((category) => (
-                  <option key={category.id} value={category.id}>
-                    {category.name}
-                  </option>
-                ))}
-            </select>
-          </div>
+              <label htmlFor="description">Description</label>
+              <Controller
+                id="description"
+                name="description"
+                control={control}
+                defaultValue={description}
+                rules={{ required: true }}
+                render={({ field }) => (
+                  <Input.TextArea
+                    {...field}
+                    rows={4}
+                    placeholder="Enter description"
+                  />
+                )}
+              />
+              {errors.description && (
+                <label className="text-danger" htmlFor="description">
+                  *{errors.description.message}
+                </label>
+              )}
+            </Form.Item>
+          </Col>
+        </Row>
 
-          <div className="form-group">
-            <label className="form-label text-muted" htmlFor="category">
-              Select tags
-            </label>
-            <select
-              multiple={allTags}
-              className="form-control"
-              id="category"
-              {...register("tags")}
+        {/* SUBMIT */}
+        <Row gutter={16}>
+          <Col>
+            <Button
+              htmlType="submit"
+              type="primary"
+              loading={isLoading}
+              style={{ marginTop: "20px" }}
             >
-              {allTags &&
-                allTags.map((tag) => (
-                  <option key={tag.id} value={tag.id}>
-                    {tag.name}
-                  </option>
-                ))}
-            </select>
-          </div>
-
-          <button
-            className="btn btn-primary mt-4"
-            type="submit"
-            disabled={isLoading}
-          >
-            Save
-          </button>
-        </form>
-      </Modal.Body>
-    </Modal>
+              Save
+            </Button>
+          </Col>
+        </Row>
+      </form>
+    </Drawer>
   );
 };
 

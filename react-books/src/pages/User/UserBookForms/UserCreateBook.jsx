@@ -42,14 +42,17 @@ const UserCreateBook = ({ visible, setVisible }) => {
   const onSubmit = (data) => {
     data.user_id = userId;
     dispatch(fetchCreateBook(data));
-    if (isSuccess) {
-      setVisible(false);
-    }
   };
 
   const onClose = () => {
     setVisible(false);
   };
+
+  useEffect(() => {
+    if (isSuccess) {
+      setVisible(false);
+    }
+  }, [isSuccess, setVisible]);
 
   return (
     <Drawer

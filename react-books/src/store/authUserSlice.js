@@ -56,6 +56,12 @@ const authUserSlice = createSlice({
       );
       state.user.books[bookIndex] = action.payload;
     },
+    setBookImage(state, action) {
+      const bookIndex = state.user.books.findIndex(
+        (book) => book.id === action.payload.id
+      );
+      state.user.books[bookIndex].image = action.payload.image;
+    },
   },
 
   extraReducers: {
@@ -66,6 +72,6 @@ const authUserSlice = createSlice({
 });
 
 const { setAuthUser } = authUserSlice.actions;
-export const { createUserBook, removeUserBook, updateUserBook } =
+export const { createUserBook, removeUserBook, updateUserBook, setBookImage } =
   authUserSlice.actions;
 export default authUserSlice.reducer;

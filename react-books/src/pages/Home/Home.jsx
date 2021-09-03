@@ -32,10 +32,8 @@ const Home = () => {
   ];
 
   useEffect(() => {
-    if (!books.length) {
-      dispatch(fetchBooks({ page, sortingParam }));
-    }
-  }, [booksCount]);
+    dispatch(fetchBooks({ page, sortingParam }));
+  }, [dispatch, page, sortingParam]);
 
   const handleBooksSort = (value) => {
     dispatch(setSortingParam(value));

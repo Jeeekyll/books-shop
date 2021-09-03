@@ -3,7 +3,7 @@ import { useParams } from "react-router";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { fetchBook } from "../../../store/booksSlice";
-import { Col, Empty, Image, Row, Space, Spin, Tag } from "antd";
+import { Col, Empty, Image, Row, Spin, Tag } from "antd";
 import Rate from "antd/lib/rate";
 
 const BookSingle = () => {
@@ -17,7 +17,7 @@ const BookSingle = () => {
 
   useEffect(() => {
     dispatch(fetchBook(slug));
-  }, []);
+  }, [slug, dispatch]);
 
   const {
     title,
@@ -58,7 +58,9 @@ const BookSingle = () => {
             {currentBook?.user && (
               <p>
                 Created {created_at} by
-                <a className="ml-1">{user?.nickname}</a>
+                <Link to="/user" className="ml-1">
+                  {user?.nickname}
+                </Link>
               </p>
             )}
             {currentBook?.tags?.length ? (

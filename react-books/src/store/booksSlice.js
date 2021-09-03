@@ -3,6 +3,7 @@ import { booksAPI } from "../api/books";
 import {
   createUserBook,
   removeUserBook,
+  setBookImage,
   updateUserBook,
 } from "./authUserSlice";
 
@@ -99,6 +100,27 @@ export const fetchUpdateBook = createAsyncThunk(
   }
 );
 
+export const fetchBookImage = createAsyncThunk(
+  "books/fetchBookImage",
+  async (params, { dispatch, rejectWithValue }) => {
+    const { id, file } = params;
+    const token = localStorage.getItem("token");
+    let formData = new FormData();
+    formData.append("image", file.file);
+    try {
+      const response = await booksAPI.updateBookImage(id, formData, token);
+      dispatch(
+        setBookImage({
+          id: id,
+          image: response.image,
+        })
+      );
+    } catch (error) {
+      return rejectWithValue(error.response.data.errors);
+    }
+  }
+);
+
 //helper actions
 const setIsLoading = (state, action) => {
   state.isLoading = true;
@@ -112,7 +134,7 @@ const setError = (state, action) => {
 };
 const setIsSuccess = (state) => {
   state.isLoading = false;
-  state.isSuccess = true;
+  state.isSuccess = false;
 };
 
 const booksSlice = createSlice({
@@ -145,6 +167,7 @@ const booksSlice = createSlice({
     },
     createBook(state, action) {
       state.books.push(action.payload);
+      state.isSuccess = true;
     },
     removeBook(state, action) {
       state.books = state.books.filter((book) => book.id !== action.payload);
@@ -154,6 +177,7 @@ const booksSlice = createSlice({
         (book) => book.id === action.payload.id
       );
       state.books[bookIndex] = action.payload;
+      state.isSuccess = true;
     },
     setSortingParam(state, action) {
       state.sortingParam = action.payload;

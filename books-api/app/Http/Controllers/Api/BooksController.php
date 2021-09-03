@@ -10,8 +10,6 @@ use App\Models\Book;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Storage;
-use Intervention\Image\ImageManagerStatic as Image;
-
 
 class BooksController extends Controller
 {
@@ -47,16 +45,8 @@ class BooksController extends Controller
             'pages' => 'required|min:1|max:3000',
             'rating' => 'required|min:0|max:5',
             'user_id' => 'required',
-//            'image' => 'image:jpeg,png,jpg,gif,svg|max:2048',
             'category_id' => 'required',
         ]);
-
-//        if ($request->hasFile('image')) {
-//            $uploadFolder = 'images';
-//            $image = $request->file('image');
-//            $image_uploaded_path = $image->store($uploadFolder, 'public');
-//            $data['image'] = Storage::disk('public')->url($image_uploaded_path);
-//        }
 
         $book = Book::query()->create($request->all());
         $book->tags()->sync($request->tags);
@@ -77,7 +67,24 @@ class BooksController extends Controller
         $book->update($request->all());
         $book->tags()->sync($request->tags);
 
-        return new BookResource( $book );
+        return new BookResource($book);
+    }
+
+    public function updateImage(Request $request, $id)
+    {
+        $request->validate([
+            'image' => 'image:jpeg,png,jpg,gif,svg|max:2048',
+        ]);
+        $data = $request->all();
+        if ($request->hasFile('image')) {
+            $uploadFolder = 'images';
+            $image = $request->file('image');
+            $image_uploaded_path = $image->store($uploadFolder, 'public');
+            $data['image'] = Storage::disk('public')->url($image_uploaded_path);
+        }
+        $book = Book::query()->find($id);
+        $book->update($data);
+        return $book;
     }
 
     public function destroy($id)

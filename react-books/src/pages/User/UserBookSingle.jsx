@@ -2,12 +2,16 @@ import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import UserDeleteBook from "./UserBookForms/UserDeleteBook";
 import UserUpdateBook from "./UserBookForms/UserUpdateBook";
-import { Avatar, Image, List } from "antd";
-import { EyeOutlined, LikeOutlined, MessageOutlined } from "@ant-design/icons";
+import { Avatar, Image, List, Upload } from "antd";
+import { EyeOutlined } from "@ant-design/icons";
 import fallback from "./logo192.png";
 import Paragraph from "antd/lib/typography/Paragraph";
 import EditOutlined from "@ant-design/icons/lib/icons/EditOutlined";
 import DeleteOutlined from "@ant-design/icons/lib/icons/DeleteOutlined";
+import LoadingOutlined from "@ant-design/icons/lib/icons/LoadingOutlined";
+import PlusOutlined from "@ant-design/icons/lib/icons/PlusOutlined";
+import { useDispatch } from "react-redux";
+import { fetchBookImage } from "../../store/booksSlice";
 
 const UserBookSingle = ({
   id,
@@ -20,8 +24,11 @@ const UserBookSingle = ({
   tags,
   image,
 }) => {
+  const dispatch = useDispatch();
+
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showUpdateModal, setShowUpdateModal] = useState(false);
+  const [isImageLoading] = useState(false);
 
   const currentBookObject = {
     id,
@@ -33,27 +40,56 @@ const UserBookSingle = ({
     tags,
   };
 
+  const uploadButton = (
+    <div>
+      {isImageLoading ? <LoadingOutlined /> : <PlusOutlined />}
+      <div style={{ marginTop: 8 }}>Upload</div>
+    </div>
+  );
+
   return (
     <List.Item
       key={title}
       actions={[
         <Link to={"/books/" + slug}>
-          <EyeOutlined />
+          <EyeOutlined style={{ fontSize: "18px" }} />
         </Link>,
-        <EditOutlined onClick={() => setShowUpdateModal(true)} />,
-        <DeleteOutlined onClick={() => setShowDeleteModal(true)} />,
+        <EditOutlined
+          style={{ fontSize: "18px" }}
+          onClick={() => setShowUpdateModal(true)}
+        />,
+        <DeleteOutlined
+          style={{ fontSize: "18px" }}
+          onClick={() => setShowDeleteModal(true)}
+        />,
       ]}
       extra={
         image ? (
-          <Image width={100} alt="logo" src={image} />
+          <Image
+            width={100}
+            alt="logo"
+            src={image}
+            placeholder={<Image preview={false} src={fallback} width={100} />}
+          />
         ) : (
-          <Image width={100} alt="logo" src={fallback} />
+          <Upload
+            name="avatar"
+            listType="picture-card"
+            className="avatar-uploader"
+            showUploadList={false}
+            defaultFileList={image}
+            customRequest={(file) => {
+              dispatch(fetchBookImage({ id, file }));
+            }}
+          >
+            {uploadButton}
+          </Upload>
         )
       }
     >
       <List.Item.Meta
         avatar={<Avatar />}
-        title={<a>{title}</a>}
+        title={title}
         description={
           <Paragraph
             ellipsis={{
@@ -68,13 +104,13 @@ const UserBookSingle = ({
       />
 
       <UserDeleteBook
-        show={showDeleteModal}
-        setShow={setShowDeleteModal}
+        visible={showDeleteModal}
+        setVisible={setShowDeleteModal}
         id={id}
       />
       <UserUpdateBook
-        show={showUpdateModal}
-        setShow={setShowUpdateModal}
+        visible={showUpdateModal}
+        setVisible={setShowUpdateModal}
         {...currentBookObject}
       />
     </List.Item>

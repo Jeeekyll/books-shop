@@ -1,26 +1,13 @@
 import React from "react";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { Link } from "react-router-dom";
 import { yupResolver } from "@hookform/resolvers/yup";
-import * as yup from "yup";
 import { useDispatch, useSelector } from "react-redux";
 import { register as registerUser } from "../../store/userSlice";
 import BackendErrors from "../../components/BackendErrors";
-
-const registrationSchema = yup.object().shape({
-  name: yup.string("Enter your name").required("Name is required"),
-  email: yup
-    .string("Enter your email")
-    .email("Enter a valid email")
-    .required("Email is required"),
-  password: yup
-    .string("Enter your password")
-    .min(3, "Password should be of minimum 3 characters length")
-    .required("Password is required"),
-  password_confirmation: yup
-    .string()
-    .oneOf([yup.ref("password"), null], "Passwords must match"),
-});
+import { Button, Col, Input, Row } from "antd";
+import Title from "antd/lib/typography/Title";
+import { registrationSchema } from "./validation/userRegisterFormValidation";
 
 const Register = () => {
   const dispatch = useDispatch();
@@ -30,147 +17,149 @@ const Register = () => {
   }));
 
   const {
-    register,
     handleSubmit,
+    control,
     formState: { errors },
   } = useForm({ resolver: yupResolver(registrationSchema) });
 
-  const onSubmit = async (data) => {
+  const onSubmit = (data) => {
     dispatch(registerUser(data));
   };
 
   return (
-    <section className="vh-100">
-      <div className="mask d-flex align-items-center h-100 gradient-custom-3">
-        <div className="container">
-          <div className="row d-flex justify-content-center align-items-center h-100">
-            <div className="col-12 col-md-9 col-lg-7 col-xl-6">
-              <div className="card" style={{ borderRadius: "15px" }}>
-                <div className="card-body p-5">
-                  <h2 className="text-uppercase text-center mb-5">
-                    Create an account
-                  </h2>
+    <Row justify="center">
+      <Col span={8}>
+        <Row justify="center">
+          <Col>
+            <Title level={3}>Create an account</Title>
+          </Col>
 
-                  <form onSubmit={handleSubmit(onSubmit)}>
-                    {error && <BackendErrors errors={error} />}
+          <Col span={24}>
+            <form onSubmit={handleSubmit(onSubmit)}>
+              <Row>
+                {error && (
+                  <Col span={24}>
+                    <BackendErrors errors={error} />
+                  </Col>
+                )}
+                <Col span={24} style={{ marginTop: "15px" }}>
+                  <Controller
+                    name="name"
+                    control={control}
+                    render={({ field }) => (
+                      <Input {...field} placeholder="Enter name" size="large" />
+                    )}
+                  />
+                  {errors.name ? (
+                    <label className="text-danger" htmlFor="name">
+                      *{errors.name?.message}
+                    </label>
+                  ) : (
+                    <label className="text-muted" htmlFor="name">
+                      *Username
+                    </label>
+                  )}
+                </Col>
 
-                    <div className="form-outline mb-4">
-                      <input
-                        {...register("name")}
-                        type="text"
-                        id="name"
-                        className="form-control form-control-lg"
-                      />
-                      {errors.name ? (
-                        <label
-                          className="form-label text-danger"
-                          htmlFor="name"
-                        >
-                          *{errors.name?.message}
-                        </label>
-                      ) : (
-                        <label className="form-label text-muted" htmlFor="name">
-                          Your Name
-                        </label>
-                      )}
-                    </div>
-
-                    <div className="form-outline mb-4">
-                      <input
-                        {...register("email")}
+                <Col span={24} style={{ marginTop: "15px" }}>
+                  <Controller
+                    name="email"
+                    control={control}
+                    render={({ field }) => (
+                      <Input
+                        {...field}
+                        placeholder="Enter email"
                         type="email"
-                        id="email"
-                        className="form-control form-control-lg"
+                        size="large"
                       />
-                      {errors.email ? (
-                        <label
-                          className="form-label text-danger"
-                          htmlFor="email"
-                        >
-                          *{errors.email?.message}
-                        </label>
-                      ) : (
-                        <label
-                          className="form-label text-muted"
-                          htmlFor="email"
-                        >
-                          Your Email
-                        </label>
-                      )}
-                    </div>
+                    )}
+                  />
+                  {errors.email ? (
+                    <label className="text-danger" htmlFor="email">
+                      *{errors.email?.message}
+                    </label>
+                  ) : (
+                    <label className="text-muted" htmlFor="email">
+                      *Email
+                    </label>
+                  )}
+                </Col>
 
-                    <div className="form-outline mb-4">
-                      <input
-                        {...register("password")}
-                        type="password"
-                        id="password"
-                        className="form-control form-control-lg"
+                <Col span={24} style={{ marginTop: "15px" }}>
+                  <Controller
+                    name="password"
+                    control={control}
+                    render={({ field }) => (
+                      <Input.Password
+                        {...field}
+                        placeholder="Enter password"
+                        size="large"
                       />
-                      {errors.password ? (
-                        <label
-                          className="form-label text-danger"
-                          htmlFor="password"
-                        >
-                          *{errors.password?.message}
-                        </label>
-                      ) : (
-                        <label
-                          className="form-label text-muted"
-                          htmlFor="password"
-                        >
-                          Your Password
-                        </label>
-                      )}
-                    </div>
+                    )}
+                  />
+                  {errors.password ? (
+                    <label className="text-danger" htmlFor="password">
+                      *{errors.password?.message}
+                    </label>
+                  ) : (
+                    <label className="text-muted" htmlFor="password">
+                      *Password
+                    </label>
+                  )}
+                </Col>
 
-                    <div className="form-outline mb-4">
-                      <input
-                        {...register("password_confirmation")}
-                        type="password"
-                        id="password_confirmation"
-                        className="form-control form-control-lg"
+                <Col span={24} style={{ marginTop: "15px" }}>
+                  <Controller
+                    name="password_confirmation"
+                    control={control}
+                    render={({ field }) => (
+                      <Input.Password
+                        {...field}
+                        placeholder="Confirm password"
+                        size="large"
                       />
-                      {errors.password_confirmation ? (
-                        <label
-                          className="form-label text-danger"
-                          htmlFor="password_confirmation"
-                        >
-                          *{errors.password_confirmation?.message}
-                        </label>
-                      ) : (
-                        <label
-                          className="form-label text-muted"
-                          htmlFor="password_confirmation"
-                        >
-                          Confirm your password
-                        </label>
-                      )}
-                    </div>
-
-                    <div className="d-flex justify-content-center">
-                      <button
-                        disabled={isLoading}
-                        type="submit"
-                        className="btn btn-success btn-block btn-lg gradient-custom-4 text-body"
-                      >
-                        Register
-                      </button>
-                    </div>
-
-                    <p className="text-center text-muted mt-5 mb-0">
-                      Have already an account? &nbsp;
-                      <Link to="/login" className="fw-bold text-body">
-                        <u>Login here</u>
-                      </Link>
-                    </p>
-                  </form>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
+                    )}
+                  />
+                  {errors.password_confirmation ? (
+                    <label
+                      className="text-danger"
+                      htmlFor="password_confirmation"
+                    >
+                      *{errors.password_confirmation?.message}
+                    </label>
+                  ) : (
+                    <label
+                      className="text-muted"
+                      htmlFor="password_confirmation"
+                    >
+                      *Confirm password
+                    </label>
+                  )}
+                </Col>
+                <Col span={8} style={{ marginTop: "15px" }}>
+                  <Button
+                    type="primary"
+                    htmlType="submit"
+                    loading={isLoading}
+                    size="large"
+                  >
+                    Register
+                  </Button>
+                </Col>
+                <Col span={24} style={{ marginTop: "20px" }}>
+                  <p style={{ textAlign: "center" }}>
+                    Already have an account? &nbsp;
+                    <Link to="/login">
+                      <u>Login here</u>
+                    </Link>
+                  </p>
+                </Col>
+              </Row>
+            </form>
+          </Col>
+        </Row>
+      </Col>
+    </Row>
   );
 };
 

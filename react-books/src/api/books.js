@@ -56,4 +56,14 @@ export const booksAPI = {
     );
     return response.data;
   },
+
+  updateBookImage: async (id, data, token) => {
+    await getCsrfToken();
+    const response = await axiosInstance.post(`${endpoint}/${id}/image`, data, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    return response.data;
+  },
 };

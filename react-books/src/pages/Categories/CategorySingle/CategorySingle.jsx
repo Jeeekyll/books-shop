@@ -23,7 +23,7 @@ const CategorySingle = () => {
 
   useEffect(() => {
     dispatch(fetchCategory({ slug }));
-  }, [slug]);
+  }, [slug, dispatch]);
 
   return (
     <section className="category-single">

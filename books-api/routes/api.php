@@ -34,6 +34,8 @@ Route::get('categories/{slug}', [CategoriesController::class, 'show']);
 //tags routes
 Route::get('tags', [TagsController::class, 'index']);
 
+Route::post('books/{id}/image', [BooksController::class, 'updateImage']);
+
 //Protected routes
 Route::group(['middleware' => ['auth:sanctum']], function () {
     //auth routes
@@ -43,6 +45,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::get('user', [UserController::class, 'index']);
     //books routes
     Route::post('books', [BooksController::class, 'store']);
+   // Route::post('books/{id}/image', [BooksController::class, 'updateImage']);
     Route::put('books/{id}', [BooksController::class, 'update']);
     Route::delete('books/{id}', [BooksController::class, 'destroy']);
 });

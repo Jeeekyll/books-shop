@@ -26,7 +26,7 @@ const User = () => {
 
   useEffect(() => {
     dispatch(fetchAuthUser());
-  }, []);
+  }, [dispatch]);
 
   return (
     <section className="user">
